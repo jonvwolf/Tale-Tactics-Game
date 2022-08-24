@@ -46,16 +46,21 @@ public class MenuController : MonoBehaviour
             txtError.text = "Server error. Returned response code: " + www.responseCode;
             Debug.LogError("Server error: " + www.downloadHandler.text);
         }
-        else if(www.responseCode == 200)
+        else if (www.responseCode == 200)
         {
             var json = www.downloadHandler.text;
             Debug.Log("Server returned: " + json);
-            var model = JsonConvert.DeserializeObject<ReadGameConfiguration>(json);
+            var model = JsonConvert.DeserializeObject<ReadGameConfigurationModel>(json);
+            Global.SetGameConfiguration(new CurrentGameConfigurationModel(gameCode, model));
             txtError.text = "OK. Got game configuration";
+        }
+        else if (www.result != UnityWebRequest.Result.Success)
+        {
+            txtError.text = "Web request was not successful: " + www.error;
         }
         else
         {
-            txtError.text = "Unkown response code: " + www.responseCode;
+            txtError.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
         }
     }
 }

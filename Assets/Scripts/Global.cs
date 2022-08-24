@@ -1,18 +1,25 @@
-using System.Collections;
+﻿using Assets.Scripts.Models;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Global : MonoBehaviour
+namespace Assets.Scripts
 {
-    // Start is called before the first frame update
-    void Start()
+    public static class Global
     {
-        
-    }
+        static CurrentGameConfigurationModel readGameConfigurationModel;
+        public static CurrentGameConfigurationModel GetGameConfiguration()
+        {
+            // TODO: should copy model?
+            return readGameConfigurationModel;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public static void SetGameConfiguration(CurrentGameConfigurationModel model)
+        {
+            // TODO: should copy the model?
+            readGameConfigurationModel = model;
+        }
     }
 }

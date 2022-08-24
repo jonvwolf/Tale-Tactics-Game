@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Models
 {
-    public class ReadGameConfiguration
+    public class ReadGameConfigurationModel
     {
         public IReadOnlyList<ReadImageModel> Images { get; set; }
         public IReadOnlyList<ReadAudioModel> Audios { get; set; }
