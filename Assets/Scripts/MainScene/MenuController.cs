@@ -1,11 +1,13 @@
 using Assets.Scripts;
 using Assets.Scripts.Models;
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
@@ -17,6 +19,9 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (Constants.IsDebug)
+            StartCoroutine(GetStoryModel("92086"));
+
         btnStartGame.onClick.AddListener(EnterGame_Click);
     }
 
@@ -50,9 +55,25 @@ public class MenuController : MonoBehaviour
         {
             var json = www.downloadHandler.text;
             Debug.Log("Server returned: " + json);
-            var model = JsonConvert.DeserializeObject<ReadGameConfigurationModel>(json);
-            Global.SetGameConfiguration(new CurrentGameConfigurationModel(gameCode, model));
+
+            try
+            {
+                var model = JsonConvert.DeserializeObject<ReadGameConfigurationModel>(json);
+                if (model == default)
+                    throw new InvalidOperationException("Deserialize object returned null");
+
+                Global.SetGameConfiguration(new CurrentGameConfigurationModel(gameCode, model));
+            }
+            catch (Exception ex)
+            {
+                txtError.text = "Exception happened: " + ex.Message;
+                throw;
+            }
+            
+
             txtError.text = "OK. Got game configuration";
+
+            SceneManager.LoadScene(Constants.LoadingSceneName);
         }
         else if (www.result != UnityWebRequest.Result.Success)
         {
