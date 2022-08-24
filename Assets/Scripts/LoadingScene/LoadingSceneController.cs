@@ -34,6 +34,10 @@ public class LoadingSceneController : MonoBehaviour
         if (!IsDebug)
         {
             ImageTest.enabled = false;
+            ButtonTest.enabled = false;
+        }
+        else
+        {
             ButtonTest.onClick.AddListener(() =>
             {
                 AudioTest.Play();
