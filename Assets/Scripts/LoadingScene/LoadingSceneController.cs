@@ -82,75 +82,90 @@ public class LoadingSceneController : MonoBehaviour
 
             yield return LoadAsset(null, item);
         }
+
+        LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
+        LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
     }
 
     IEnumerator LoadAsset(ReadImageModel image, ReadAudioModel audio)
     {
         string url;
-
-        if (image == default)
-        {
-            url = audio.AbsoluteUrl;
-        }
-        else
-        {
-            url = image.AbsoluteUrl;
-        }
-
         LoadingAssetText.text = $"Loading asset {LoadedAssets} out of {TotalAssets}...";
 
-        using var www = UnityWebRequestTexture.GetTexture(url);
-        yield return www.SendWebRequest();
-
-        if (www.responseCode == 404)
+        UnityWebRequest www = default;
+        try
         {
-            ErrorText.text = $"File does not exist: {url}";
-        }
-        else if (www.responseCode >= 500 && www.responseCode <= 599)
-        {
-            ErrorText.text = "Server error. Returned response code: " + www.responseCode;
-            Debug.LogError("Server error: " + www.downloadHandler.text);
-        }
-        else if (www.responseCode == 200)
-        {
-            try
+            if (image == default)
             {
-                if (image == default)
+                url = audio.AbsoluteUrl;
+                www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG);
+            }
+            else
+            {
+                url = image.AbsoluteUrl;
+                www = UnityWebRequestTexture.GetTexture(url);
+            }
+
+            yield return www.SendWebRequest();
+            if (www.responseCode == 404)
+            {
+                ErrorText.text = $"File does not exist: {url}";
+            }
+            else if (www.responseCode >= 500 && www.responseCode <= 599)
+            {
+                ErrorText.text = "Server error. Returned response code: " + www.responseCode;
+                Debug.LogError("Server error: " + www.downloadHandler.text);
+            }
+            else if (www.responseCode == 200)
+            {
+                try
                 {
-                    var clip = DownloadHandlerAudioClip.GetContent(www);
-
-                    AudioTest.clip = clip;
-
-                    LoadedAudios.Add(audio.Id, audio);
-                }
-                else
-                {
-                    var texture = DownloadHandlerTexture.GetContent(www);
-
-                    if (IsDebug)
+                    if (image == default)
                     {
-                        var sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
-                        ImageTest.sprite = sprite;
+                        var clip = DownloadHandlerAudioClip.GetContent(www);
+
+                        if (IsDebug)
+                        {
+                            AudioTest.clip = clip;
+                        }
+
+                        LoadedAudios.Add(audio.Id, audio);
+                    }
+                    else
+                    {
+                        var texture = DownloadHandlerTexture.GetContent(www);
+
+                        if (IsDebug)
+                        {
+                            var sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+                            ImageTest.sprite = sprite;
+                        }
+
+                        LoadedImages.Add(image.Id, image);
                     }
 
-                    LoadedImages.Add(image.Id, image);
+                    LoadedAssets++;
                 }
-                
-                LoadedAssets++;
+                catch (Exception e)
+                {
+                    ErrorText.text = "Exception happened: " + e.Message + ". Url: " + url;
+                    throw;
+                }
             }
-            catch (Exception e)
+            else if (www.result != UnityWebRequest.Result.Success)
             {
-                ErrorText.text = "Exception happened: " + e.Message + ". Url: " + url;
-                throw;
+                ErrorText.text = "Web request was not successful: " + www.error;
+            }
+            else
+            {
+                ErrorText.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
             }
         }
-        else if (www.result != UnityWebRequest.Result.Success)
+        finally
         {
-            ErrorText.text = "Web request was not successful: " + www.error;
+            if (www != default)
+                www.Dispose();
         }
-        else
-        {
-            ErrorText.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
-        }
+        
     }
 }
