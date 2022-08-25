@@ -16,11 +16,19 @@ public class MenuController : MonoBehaviour
     public TMP_InputField txtGameCode;
     public TMP_Text txtError;
 
+    public Canvas mainCanvas;
+    public Canvas creditsCanvas;
+    public Button btnGoBackMain;
+    public Button btnGoCredits;
+
     // Start is called before the first frame update
     void Start()
     {
-        if (Constants.IsDebug)
-            StartCoroutine(GetStoryModel("92086"));
+        //if (Constants.IsDebug)
+        //    StartCoroutine(GetStoryModel("92086"));
+
+        creditsCanvas.enabled = false;
+        creditsCanvas.gameObject.SetActive(false);
 
         var model = Global.GetGameConfiguration();
         if (model != default)
@@ -30,6 +38,8 @@ public class MenuController : MonoBehaviour
         }
 
         btnStartGame.onClick.AddListener(EnterGame_Click);
+        btnGoCredits.onClick.AddListener(GoCredits_Click);
+        btnGoBackMain.onClick.AddListener(GoBackMain_Click);
     }
 
     // Update is called once per frame
@@ -44,6 +54,17 @@ public class MenuController : MonoBehaviour
         StartCoroutine(GetStoryModel(txtGameCode.text.Trim()));
     }
 
+    public void GoCredits_Click()
+    {
+        creditsCanvas.enabled = true;
+        creditsCanvas.gameObject.SetActive(true);
+    }
+
+    public void GoBackMain_Click()
+    {
+        creditsCanvas.enabled = false;
+        creditsCanvas.gameObject.SetActive(false);
+    }
     IEnumerator GetStoryModel(string gameCode)
     {
         txtError.text = "Loading game configuration...";
