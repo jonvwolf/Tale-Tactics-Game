@@ -18,6 +18,7 @@ public class LoadingSceneController : MonoBehaviour
     public Image ImageTest;
     public AudioSource AudioTest;
     public Button ButtonTest;
+    public Button btnRetry;
 
     readonly bool IsDebug = Constants.IsDebug;
 
@@ -31,10 +32,15 @@ public class LoadingSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        btnRetry.enabled = false;
+        btnRetry.gameObject.SetActive(false);
+
         if (!IsDebug)
         {
             ImageTest.enabled = false;
             ButtonTest.enabled = false;
+            ImageTest.gameObject.SetActive(false);
+            ButtonTest.gameObject.SetActive(false);
         }
         else
         {
@@ -78,13 +84,11 @@ public class LoadingSceneController : MonoBehaviour
             {
                 LoadedImages.Add(item.Key);
                 Debug.Log("Reusing image id: " + item.Key);
-                LoadedAssets++;
             }
             foreach (var item in loadedAssets.LoadedAudios)
             {
                 LoadedAudios.Add(item.Key);
                 Debug.Log("Reusing audio id: " + item.Key);
-                LoadedAssets++;
             }
         }
         else
@@ -104,13 +108,19 @@ public class LoadingSceneController : MonoBehaviour
 
     IEnumerator LoadAssets(CurrentGameConfigurationModel model)
     {
+        btnRetry.enabled = false;
+        btnRetry.gameObject.SetActive(false);
+
         TotalAssets = model.ReadGameConfigurationModel.Images.Count + model.ReadGameConfigurationModel.Audios.Count + model.ReadGameConfigurationModel.Minigames.Count;
         LoadedAssets = 0;
 
         foreach(var item in model.ReadGameConfigurationModel.Images)
         {
             if (LoadedImages.Contains(item.Id))
+            {
+                LoadedAssets++;
                 continue;
+            }
 
             yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(item, null);
@@ -119,7 +129,10 @@ public class LoadingSceneController : MonoBehaviour
         foreach (var item in model.ReadGameConfigurationModel.Audios)
         {
             if (LoadedAudios.Contains(item.Id))
+            {
+                LoadedAssets++;
                 continue;
+            }
 
             yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(null, item);
@@ -152,15 +165,20 @@ public class LoadingSceneController : MonoBehaviour
                 www = UnityWebRequestTexture.GetTexture(url);
             }
 
+            Debug.Log("Calling url: " + url);
             yield return www.SendWebRequest();
             if (www.responseCode == 404)
             {
                 ErrorText.text = $"File does not exist: {url}";
+                btnRetry.enabled = true;
+                btnRetry.gameObject.SetActive(true);
             }
             else if (www.responseCode >= 500 && www.responseCode <= 599)
             {
                 ErrorText.text = "Server error. Returned response code: " + www.responseCode;
                 Debug.LogError("Server error: " + www.downloadHandler.text);
+                btnRetry.enabled = true;
+                btnRetry.gameObject.SetActive(true);
             }
             else if (www.responseCode == 200)
             {
@@ -197,16 +215,22 @@ public class LoadingSceneController : MonoBehaviour
                 catch (Exception e)
                 {
                     ErrorText.text = "Exception happened: " + e.Message + ". Url: " + url;
+                    btnRetry.enabled = true;
+                    btnRetry.gameObject.SetActive(true);
                     throw;
                 }
             }
             else if (www.result != UnityWebRequest.Result.Success)
             {
                 ErrorText.text = "Web request was not successful: " + www.error;
+                btnRetry.enabled = true;
+                btnRetry.gameObject.SetActive(true);
             }
             else
             {
                 ErrorText.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
+                btnRetry.enabled = true;
+                btnRetry.gameObject.SetActive(true);
             }
         }
         finally
