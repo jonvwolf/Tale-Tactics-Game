@@ -22,8 +22,8 @@ public class LoadingSceneController : MonoBehaviour
     readonly bool IsDebug = Constants.IsDebug;
 
     // TODO: these dictionaries should be in Global
-    readonly Dictionary<long, LoadedImageAssetModel> LoadedImages = new();
-    readonly Dictionary<long, LoadedAudioAssetModel> LoadedAudios = new();
+    readonly HashSet<long> LoadedImages = new();
+    readonly HashSet<long> LoadedAudios = new();
 
     int TotalAssets = 0;
     int LoadedAssets = 0;
@@ -57,23 +57,40 @@ public class LoadingSceneController : MonoBehaviour
         {
             throw new Exception("This should not happen");
         }
-
+        
         var loadedAssets = Global.CurrentGameModel;
+
+        if (loadedAssets != null)
+        {
+            if (model.GameCode != loadedAssets.GameCode)
+            {
+                // different game code, delete cache
+                // no need to dispose...
+                Global.CurrentGameModel = default;
+                loadedAssets = default;
+            }
+        }
+
         if (loadedAssets != null)
         {
             // set those that are already loaded
             foreach (var item in loadedAssets.LoadedImages)
             {
-                LoadedImages.Add(item.Key, item.Value);
+                LoadedImages.Add(item.Key);
                 Debug.Log("Reusing image id: " + item.Key);
                 LoadedAssets++;
             }
             foreach (var item in loadedAssets.LoadedAudios)
             {
-                LoadedAudios.Add(item.Key, item.Value);
+                LoadedAudios.Add(item.Key);
                 Debug.Log("Reusing audio id: " + item.Key);
                 LoadedAssets++;
             }
+        }
+        else
+        {
+            // create a new game
+            Global.CurrentGameModel = new CurrentGameModel(model.GameCode);
         }
 
         StartCoroutine(LoadAssets(model));
@@ -92,7 +109,7 @@ public class LoadingSceneController : MonoBehaviour
 
         foreach(var item in model.ReadGameConfigurationModel.Images)
         {
-            if (LoadedImages.ContainsKey(item.Id))
+            if (LoadedImages.Contains(item.Id))
                 continue;
 
             yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
@@ -101,14 +118,13 @@ public class LoadingSceneController : MonoBehaviour
 
         foreach (var item in model.ReadGameConfigurationModel.Audios)
         {
-            if (LoadedAudios.ContainsKey(item.Id))
+            if (LoadedAudios.Contains(item.Id))
                 continue;
 
             yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(null, item);
         }
-        //todo: aqui me quede -> when loading and error, it should show a retry load assets button and loaded assets should not go to waste
-        // . it should actively be adding to the Globals so that they are not lost. But have an option for the user to clear "cache"
+        
         LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
         LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
 
@@ -159,7 +175,8 @@ public class LoadingSceneController : MonoBehaviour
                             AudioTest.clip = clip;
                         }
 
-                        LoadedAudios.Add(audio.Id, new LoadedAudioAssetModel(clip, audio));
+                        LoadedAudios.Add(audio.Id);
+                        Global.CurrentGameModel.AddAudio(audio.Id, new LoadedAudioAssetModel(clip, audio));
                     }
                     else
                     {
@@ -171,7 +188,8 @@ public class LoadingSceneController : MonoBehaviour
                             ImageTest.sprite = sprite;
                         }
 
-                        LoadedImages.Add(image.Id, new LoadedImageAssetModel(texture, image));
+                        LoadedImages.Add(image.Id);
+                        Global.CurrentGameModel.AddImage(image.Id, new LoadedImageAssetModel(texture, image));
                     }
 
                     LoadedAssets++;

@@ -8,12 +8,26 @@ namespace Assets.Scripts.Models
 {
     public class CurrentGameModel
     {
-        public IReadOnlyDictionary<long, LoadedImageAssetModel> LoadedImages { get; }
-        public IReadOnlyDictionary<long, LoadedAudioAssetModel> LoadedAudios { get; }
-        public CurrentGameModel(Dictionary<long, LoadedImageAssetModel> images, Dictionary<long, LoadedAudioAssetModel> audios)
+        public string GameCode { get; }
+
+        readonly Dictionary<long, LoadedImageAssetModel> _images = new();
+        readonly Dictionary<long, LoadedAudioAssetModel> _audios = new();
+
+        public IReadOnlyDictionary<long, LoadedImageAssetModel> LoadedImages => _images;
+        public IReadOnlyDictionary<long, LoadedAudioAssetModel> LoadedAudios => _audios;
+        public CurrentGameModel(string gameCode)
         {
-            LoadedImages = images;
-            LoadedAudios = audios;
+            GameCode = gameCode;
+        }
+
+        public void AddImage(long id, LoadedImageAssetModel model)
+        {
+            _images[id] = model;
+        }
+
+        public void AddAudio(long id, LoadedAudioAssetModel model)
+        {
+            _audios[id] = model;
         }
     }
 }

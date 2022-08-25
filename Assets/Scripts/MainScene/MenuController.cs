@@ -40,12 +40,33 @@ public class MenuController : MonoBehaviour
 
     public void EnterGame_Click()
     {
+        btnStartGame.interactable = false;
         StartCoroutine(GetStoryModel(txtGameCode.text.Trim()));
     }
 
     IEnumerator GetStoryModel(string gameCode)
     {
         txtError.text = "Loading game configuration...";
+
+        var lastGame = Global.CurrentGameModel;
+        if (lastGame != default)
+        {
+            if (lastGame.GameCode == gameCode)
+            {
+                var lastConfig = Global.GetGameConfiguration();
+                if (lastConfig == default)
+                {
+                    throw new Exception("lastConfig is null. This is a bug");
+                }
+
+                // Load from cache
+                SceneManager.LoadScene(Constants.LoadingSceneName);
+                yield break;
+
+                throw new Exception("yieldbreak didn't work. This is a bug");
+            }
+        }
+
         using var www = UnityWebRequest.Get(Constants.GetGameConfigurationUrl(gameCode));
         yield return www.SendWebRequest();
 
@@ -77,7 +98,6 @@ public class MenuController : MonoBehaviour
                 throw;
             }
             
-
             txtError.text = "OK. Got game configuration";
 
             SceneManager.LoadScene(Constants.LoadingSceneName);
@@ -90,5 +110,7 @@ public class MenuController : MonoBehaviour
         {
             txtError.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
         }
+
+        btnStartGame.interactable = true;
     }
 }
