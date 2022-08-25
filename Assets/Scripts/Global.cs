@@ -9,7 +9,12 @@ namespace Assets.Scripts
 {
     public static class Global
     {
+        /// <summary>
+        /// For LoadingScene
+        /// </summary>
         static CurrentGameConfigurationModel readGameConfigurationModel;
+        public static CurrentGameModel CurrentGameModel { get; set; }
+
         public static CurrentGameConfigurationModel GetGameConfiguration()
         {
             // TODO: should copy model?

@@ -22,8 +22,8 @@ public class LoadingSceneController : MonoBehaviour
     readonly bool IsDebug = Constants.IsDebug;
 
     // TODO: these dictionaries should be in Global
-    readonly Dictionary<long, ReadImageModel> LoadedImages = new Dictionary<long, ReadImageModel>();
-    readonly Dictionary<long, ReadAudioModel> LoadedAudios = new Dictionary<long, ReadAudioModel>();
+    readonly Dictionary<long, LoadedImageAssetModel> LoadedImages = new();
+    readonly Dictionary<long, LoadedAudioAssetModel> LoadedAudios = new();
 
     int TotalAssets = 0;
     int LoadedAssets = 0;
@@ -53,6 +53,29 @@ public class LoadingSceneController : MonoBehaviour
 
         LoadingText.text = $"Loading for {model.GameCode}...";
 
+        if (LoadedAudios.Count != 0 || LoadedImages.Count != 0)
+        {
+            throw new Exception("This should not happen");
+        }
+
+        var loadedAssets = Global.CurrentGameModel;
+        if (loadedAssets != null)
+        {
+            // set those that are already loaded
+            foreach (var item in loadedAssets.LoadedImages)
+            {
+                LoadedImages.Add(item.Key, item.Value);
+                Debug.Log("Reusing image id: " + item.Key);
+                LoadedAssets++;
+            }
+            foreach (var item in loadedAssets.LoadedAudios)
+            {
+                LoadedAudios.Add(item.Key, item.Value);
+                Debug.Log("Reusing audio id: " + item.Key);
+                LoadedAssets++;
+            }
+        }
+
         StartCoroutine(LoadAssets(model));
     }
 
@@ -72,6 +95,7 @@ public class LoadingSceneController : MonoBehaviour
             if (LoadedImages.ContainsKey(item.Id))
                 continue;
 
+            yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(item, null);
         }
 
@@ -80,11 +104,17 @@ public class LoadingSceneController : MonoBehaviour
             if (LoadedAudios.ContainsKey(item.Id))
                 continue;
 
+            yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(null, item);
         }
-
+        //todo: aqui me quede -> when loading and error, it should show a retry load assets button and loaded assets should not go to waste
+        // . it should actively be adding to the Globals so that they are not lost. But have an option for the user to clear "cache"
         LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
         LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
+
+        yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
+
+        SceneManager.LoadScene(Constants.GameSceneName);
     }
 
     IEnumerator LoadAsset(ReadImageModel image, ReadAudioModel audio)
@@ -129,7 +159,7 @@ public class LoadingSceneController : MonoBehaviour
                             AudioTest.clip = clip;
                         }
 
-                        LoadedAudios.Add(audio.Id, audio);
+                        LoadedAudios.Add(audio.Id, new LoadedAudioAssetModel(clip, audio));
                     }
                     else
                     {
@@ -141,7 +171,7 @@ public class LoadingSceneController : MonoBehaviour
                             ImageTest.sprite = sprite;
                         }
 
-                        LoadedImages.Add(image.Id, image);
+                        LoadedImages.Add(image.Id, new LoadedImageAssetModel(texture, image));
                     }
 
                     LoadedAssets++;

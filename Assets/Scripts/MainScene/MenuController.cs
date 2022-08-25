@@ -22,6 +22,13 @@ public class MenuController : MonoBehaviour
         if (Constants.IsDebug)
             StartCoroutine(GetStoryModel("92086"));
 
+        var model = Global.GetGameConfiguration();
+        if (model != default)
+        {
+            // set "current" one
+            txtGameCode.text = model.GameCode;
+        }
+
         btnStartGame.onClick.AddListener(EnterGame_Click);
     }
 
