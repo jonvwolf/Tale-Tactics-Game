@@ -9,7 +9,6 @@ public class GameSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        return;
         var gameModel = Global.GetGameConfiguration();
         var game = Global.CurrentGameModel;
         if (gameModel == default || game == default)
