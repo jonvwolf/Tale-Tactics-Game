@@ -7,8 +7,7 @@ using UnityEngine.UI;
 
 public class GlobalMenu : MonoBehaviour
 {
-    public GameObject prefabOpenSettings;
-    public Canvas CanvasToAttachTo;
+    GameObject prefabOpenSettings;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +21,15 @@ public class GlobalMenu : MonoBehaviour
 
         //prefabOpenSettings.transform.SetParent(CanvasToAttachTo.transform);
 
-
+        var canvas = GameObject.FindGameObjectWithTag("maincanvas");
+        if(canvas == default)
+        {
+            throw new Exception("canvas (maincanvas) is null");
+        }
         // TODO: is this memory corruption?
         prefabOpenSettings = (GameObject)Instantiate(Resources.Load("MenuPrefab/Open_settings_btn", typeof(GameObject)));
 
-        prefabOpenSettings.transform.SetParent(CanvasToAttachTo.transform, false);
+        prefabOpenSettings.transform.SetParent(canvas.transform, false);
 
         Debug.Log("Open settings btn OK");
     }
