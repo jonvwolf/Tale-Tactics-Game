@@ -32,6 +32,7 @@ public class LoadingSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Global.CurrentScene = Constants.LoadingSceneName;
         btnRetry.enabled = false;
         btnRetry.gameObject.SetActive(false);
 
@@ -71,7 +72,7 @@ public class LoadingSceneController : MonoBehaviour
             if (model.GameCode != loadedAssets.GameCode)
             {
                 // different game code, delete cache
-                // no need to dispose...
+                loadedAssets.Dispose();
                 Global.CurrentGameModel = default;
                 loadedAssets = default;
             }

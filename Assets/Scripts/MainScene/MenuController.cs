@@ -25,8 +25,12 @@ public class MenuController : MonoBehaviour
     void Start()
     {
         if (Constants.IsDebug)
-            StartCoroutine(GetStoryModel("92086"));
+        {
+            //StartCoroutine(GetStoryModel("92086"));
+            txtGameCode.text = "92086";
+        }
 
+        Global.CurrentScene = Constants.MainSceneName;
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);
 

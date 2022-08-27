@@ -13,7 +13,12 @@ namespace Assets.Scripts
         /// For LoadingScene
         /// </summary>
         static CurrentGameConfigurationModel readGameConfigurationModel;
+        /// <summary>
+        /// For Game scene
+        /// </summary>
         public static CurrentGameModel CurrentGameModel { get; set; }
+
+        public static string CurrentScene { get; set; } = string.Empty;
 
         public static CurrentGameConfigurationModel GetGameConfiguration()
         {

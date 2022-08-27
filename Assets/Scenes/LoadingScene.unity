@@ -1180,7 +1180,7 @@ GameObject:
   - component: {fileID: 1102643207}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: maincanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1423,6 +1423,7 @@ GameObject:
   - component: {fileID: 1886821003}
   - component: {fileID: 1886821007}
   - component: {fileID: 1886821006}
+  - component: {fileID: 1886821008}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1514,6 +1515,18 @@ MonoBehaviour:
   _data:
     _json: '{"declarations":{"Kind":"Object","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
     _objectReferences: []
+--- !u!114 &1886821008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886821002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3871fc6494697874781ef6de392eadbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1956220782
 GameObject:
   m_ObjectHideFlags: 0

@@ -1089,7 +1089,7 @@ GameObject:
   - component: {fileID: 1665085849}
   - component: {fileID: 1665085848}
   m_Layer: 0
-  m_Name: Waiting background
+  m_Name: Waiting background sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1106,7 +1106,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 415ed51c12a7ff14f9b5966654538b37, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -1288,6 +1288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530820993ad778345a43e93c23bb12f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sndWaiting: {fileID: 1665085848}
 --- !u!114 &1886821007
 MonoBehaviour:
   m_ObjectHideFlags: 0
