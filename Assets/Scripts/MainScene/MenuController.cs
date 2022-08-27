@@ -24,8 +24,8 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //if (Constants.IsDebug)
-        //    StartCoroutine(GetStoryModel("92086"));
+        if (Constants.IsDebug)
+            StartCoroutine(GetStoryModel("92086"));
 
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);

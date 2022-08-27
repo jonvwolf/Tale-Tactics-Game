@@ -6,12 +6,17 @@ using UnityEngine.UI;
 public class OpenSettingsBtnController : MonoBehaviour
 {
     public Button btnSelfReference;
+    GameObject prefabCanvas1;
     // Start is called before the first frame update
     void Start()
     {
+        // TODO: I don't really know why this works...
+        prefabCanvas1 = (GameObject)Instantiate(Resources.Load("MenuPrefab/OptionsPrefab", typeof(GameObject)));
+        prefabCanvas1.SetActive(false);
+
         btnSelfReference.onClick.AddListener(() =>
         {
-            Debug.Log("hey.. it works... wow...");
+            prefabCanvas1.SetActive(true);
         });
     }
 

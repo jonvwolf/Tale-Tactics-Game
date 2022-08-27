@@ -30,7 +30,7 @@ public class GlobalMenu : MonoBehaviour
         prefabOpenSettings = (GameObject)Instantiate(Resources.Load("MenuPrefab/Open_settings_btn", typeof(GameObject)));
 
         prefabOpenSettings.transform.SetParent(canvas.transform, false);
-
+        
         Debug.Log("Open settings btn OK");
     }
 
