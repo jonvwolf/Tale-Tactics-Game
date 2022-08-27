@@ -23,12 +23,10 @@ public class GlobalMenu : MonoBehaviour
         //prefabOpenSettings.transform.SetParent(CanvasToAttachTo.transform);
 
 
+        // TODO: is this memory corruption?
         prefabOpenSettings = (GameObject)Instantiate(Resources.Load("MenuPrefab/Open_settings_btn", typeof(GameObject)));
 
-        prefabOpenSettings.transform.SetParent(CanvasToAttachTo.transform);
-        prefabOpenSettings.transform.localScale = Vector3.one;
-        prefabOpenSettings.transform.localRotation = Quaternion.Euler(Vector3.zero);
-        prefabOpenSettings.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
+        prefabOpenSettings.transform.SetParent(CanvasToAttachTo.transform, false);
 
         Debug.Log("Open settings btn OK");
     }
