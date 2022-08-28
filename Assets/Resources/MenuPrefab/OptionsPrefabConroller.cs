@@ -98,6 +98,7 @@ public class OptionsPrefabConroller : MonoBehaviour
 
     void BtnExitGame_Click()
     {
+        PlayerPrefs.Save();
         // TODO: scenes have to say OK to leave
         SceneManager.LoadScene(Constants.MainSceneName);
     }

@@ -1,9 +1,11 @@
 using Assets.Scripts;
 using Assets.Scripts.Models;
+using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -31,6 +33,10 @@ public class GameSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
 
         StartCoroutine(AudioHelper.FadeIn(sndWaiting, 10f));
+
+        var connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:53353/ChatHub")
+                .Build();
     }
     void OnDestroy()
     {
