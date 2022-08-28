@@ -20,6 +20,7 @@ public class MenuController : MonoBehaviour
     public Canvas creditsCanvas;
     public Button btnGoBackMain;
     public Button btnGoCredits;
+    public Button btnExit;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +45,7 @@ public class MenuController : MonoBehaviour
         btnStartGame.onClick.AddListener(EnterGame_Click);
         btnGoCredits.onClick.AddListener(GoCredits_Click);
         btnGoBackMain.onClick.AddListener(GoBackMain_Click);
+        btnExit.onClick.AddListener(BtnExit_Click);
     }
 
     // Update is called once per frame
@@ -52,9 +54,14 @@ public class MenuController : MonoBehaviour
         
     }
 
+    public void BtnExit_Click()
+    {
+        Application.Quit();
+    }
     public void EnterGame_Click()
     {
         btnStartGame.interactable = false;
+        btnExit.interactable = false;
         StartCoroutine(GetStoryModel(txtGameCode.text.Trim()));
     }
 
@@ -137,5 +144,6 @@ public class MenuController : MonoBehaviour
         }
 
         btnStartGame.interactable = true;
+        btnExit.interactable = true;
     }
 }
