@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,6 +13,8 @@ public class OptionsPrefabConroller : MonoBehaviour
     public Button btnClearCache;
     public TMP_Text txtCurrentCache;
     public Button btnExitGame;
+    public Toggle tglVsync;
+    public Slider sldVolume;
 
     // Start is called before the first frame update
     void Start()
@@ -42,11 +45,44 @@ public class OptionsPrefabConroller : MonoBehaviour
         btnClearCache.onClick.AddListener(BtnClearCache_Click);
         btnExitGame.onClick.AddListener(BtnExitGame_Click);
         BtnGoBack.onClick.AddListener(BtnGoBack_Click);
+
+        var settings = Global.GetCurrentUserSettings();
+        if (settings.VSync == Constants.VSyncEnabledValue)
+            tglVsync.isOn = true;
+        else
+            tglVsync.isOn = false;
+
+        sldVolume.value = settings.Volume.Value;
+
+        tglVsync.onValueChanged.AddListener(TglVsync_ValueChanged);
+        sldVolume.onValueChanged.AddListener(SldVolume_ValueChanged);
+    }
+
+    void SldVolume_ValueChanged(float value)
+    {
+        PlayerPrefs.SetFloat(Constants.VolumeSettingKey, value);
+
+        Global.UserSettingsChanged(new Assets.Scripts.Models.UserSettingsEventArgs()
+        {
+            Volume = value
+        });
+    }
+
+    void TglVsync_ValueChanged(bool value)
+    {
+        int val = Convert.ToInt32(value);
+        PlayerPrefs.SetInt(Constants.VSyncSettingKey, val);
+
+        Global.UserSettingsChanged(new Assets.Scripts.Models.UserSettingsEventArgs()
+        {
+            VSync = val
+        });
     }
 
     void BtnGoBack_Click()
     {
         gameObject.SetActive(false);
+        PlayerPrefs.Save();
     }
 
     void BtnClearCache_Click()

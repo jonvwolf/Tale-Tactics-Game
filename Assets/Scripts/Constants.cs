@@ -15,6 +15,11 @@ namespace Assets.Scripts
 
         public readonly static float WaitForSecondsAfterEachLoadAsset = 0.450f;
 
+        public const string VSyncSettingKey = "vsync";
+        public const string VolumeSettingKey = "volume";
+        public const string MixerMasterVolumeKey = "mastervol";
+        public const int VSyncEnabledValue = 1;
+
         readonly static string BaseUrl = "https://ht-api.whostreaming.net";
         public static string GetGameConfigurationUrl(string gameCode)
         {

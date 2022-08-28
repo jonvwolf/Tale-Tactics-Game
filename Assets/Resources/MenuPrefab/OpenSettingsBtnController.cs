@@ -10,7 +10,12 @@ public class OpenSettingsBtnController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (prefabCanvas1 != default)
+        {
+            throw new System.Exception("prefabCanvas1 is not null");
+        }
         // TODO: I don't really know why this works...
+        // TODO: does this generate memory leaks?
         prefabCanvas1 = (GameObject)Instantiate(Resources.Load("MenuPrefab/OptionsPrefab", typeof(GameObject)));
         prefabCanvas1.SetActive(false);
 

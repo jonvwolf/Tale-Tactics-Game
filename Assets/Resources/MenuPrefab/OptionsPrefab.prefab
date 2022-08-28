@@ -975,6 +975,8 @@ MonoBehaviour:
   btnClearCache: {fileID: 627697345606771344}
   txtCurrentCache: {fileID: 154342142938355699}
   btnExitGame: {fileID: 1473147158185949870}
+  tglVsync: {fileID: 627697345006120996}
+  sldVolume: {fileID: 627697343886578986}
 --- !u!1 &627697344635857709
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,7 +1197,7 @@ GameObject:
   - component: {fileID: 627697345006120997}
   - component: {fileID: 627697345006120996}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: vsync toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

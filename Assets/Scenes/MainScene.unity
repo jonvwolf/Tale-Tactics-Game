@@ -2784,7 +2784,7 @@ MonoBehaviour:
   creditsCanvas: {fileID: 835289992}
   btnGoBackMain: {fileID: 352295527}
   btnGoCredits: {fileID: 856815741}
-  btnExit: {fileID: 0}
+  btnExit: {fileID: 288995922}
 --- !u!114 &1886821007
 MonoBehaviour:
   m_ObjectHideFlags: 0

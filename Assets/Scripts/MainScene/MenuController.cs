@@ -46,6 +46,22 @@ public class MenuController : MonoBehaviour
         btnGoCredits.onClick.AddListener(GoCredits_Click);
         btnGoBackMain.onClick.AddListener(GoBackMain_Click);
         btnExit.onClick.AddListener(BtnExit_Click);
+
+        var settings = Global.GetCurrentUserSettings();
+        Global.ApplyUserSettings(settings);
+
+        Global.OnUserSettingsChanged += OnUserSettingsChanged;
+    }
+
+    void OnDestroy()
+    {
+        Global.OnUserSettingsChanged -= OnUserSettingsChanged;
+        Debug.Log("MenuController:OnDestroy");
+    }
+
+    void OnUserSettingsChanged(object sender, UserSettingsEventArgs args)
+    {
+        Global.ApplyUserSettings(args);
     }
 
     // Update is called once per frame

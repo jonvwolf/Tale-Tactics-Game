@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Audio;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Assets.Scripts
 {
@@ -19,6 +22,43 @@ namespace Assets.Scripts
         public static CurrentGameModel CurrentGameModel { get; set; }
 
         public static string CurrentScene { get; set; } = string.Empty;
+
+        public static event EventHandler<UserSettingsEventArgs> OnUserSettingsChanged;
+        
+        public static void UserSettingsChanged(UserSettingsEventArgs args)
+        {
+            var ev = OnUserSettingsChanged;
+            ev?.Invoke(null, args);
+        }
+
+        public static UserSettingsEventArgs GetCurrentUserSettings()
+        {
+            var volume = PlayerPrefs.GetFloat(Constants.VolumeSettingKey, float.MinValue);
+            if (volume == float.MinValue)
+                volume = 0.75f;
+
+            var vsync = PlayerPrefs.GetInt(Constants.VSyncSettingKey, int.MinValue);
+            if (vsync == int.MinValue)
+                vsync = Constants.VSyncEnabledValue;
+
+            return new UserSettingsEventArgs()
+            {
+                Volume = volume,
+                VSync = vsync
+            };
+        }
+
+        public static void ApplyUserSettings(UserSettingsEventArgs args, AudioMixer mixer = default)
+        {
+            if (args.VSync.HasValue)
+            {
+                QualitySettings.vSyncCount = args.VSync.Value;
+                Debug.Log("vSyncCount = " + QualitySettings.vSyncCount);
+            }
+
+            if (args.Volume.HasValue && mixer != default)
+                mixer.SetFloat(Constants.MixerMasterVolumeKey, Mathf.Log10(args.Volume.Value) * 20);
+        }
 
         public static CurrentGameConfigurationModel GetGameConfiguration()
         {
