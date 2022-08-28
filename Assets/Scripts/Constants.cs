@@ -19,6 +19,7 @@ namespace Assets.Scripts
         public const string VolumeSettingKey = "volume";
         public const string MixerMasterVolumeKey = "mastervol";
         public const int VSyncEnabledValue = 1;
+        public const float DefaultVolume = 5f;
 
         readonly static string BaseUrl = "https://ht-api.whostreaming.net";
         public static string GetGameConfigurationUrl(string gameCode)

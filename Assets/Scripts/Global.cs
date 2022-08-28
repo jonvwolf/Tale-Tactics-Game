@@ -35,7 +35,7 @@ namespace Assets.Scripts
         {
             var volume = PlayerPrefs.GetFloat(Constants.VolumeSettingKey, float.MinValue);
             if (volume == float.MinValue)
-                volume = 0.75f;
+                volume = Constants.DefaultVolume;
 
             var vsync = PlayerPrefs.GetInt(Constants.VSyncSettingKey, int.MinValue);
             if (vsync == int.MinValue)
@@ -52,10 +52,12 @@ namespace Assets.Scripts
         {
             if (args.VSync.HasValue)
             {
-                QualitySettings.vSyncCount = args.VSync.Value;
+                if (QualitySettings.vSyncCount != args.VSync.Value)
+                    QualitySettings.vSyncCount = args.VSync.Value;
                 Debug.Log("vSyncCount = " + QualitySettings.vSyncCount);
             }
 
+            // TODO: Not sure if everysingle Start of scene, I have to do this...
             if (args.Volume.HasValue && mixer != default)
                 mixer.SetFloat(Constants.MixerMasterVolumeKey, Mathf.Log10(args.Volume.Value) * 20);
         }

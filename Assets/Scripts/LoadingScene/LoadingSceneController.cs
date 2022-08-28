@@ -98,7 +98,24 @@ public class LoadingSceneController : MonoBehaviour
             Global.CurrentGameModel = new CurrentGameModel(model.GameCode);
         }
 
+        // TODO: these user settings code setup is COPIED CODE
+        var settings = Global.GetCurrentUserSettings();
+        Global.ApplyUserSettings(settings);
+
+        Global.OnUserSettingsChanged += OnUserSettingsChanged;
+
         StartCoroutine(LoadAssets(model));
+    }
+
+    void OnDestroy()
+    {
+        Global.OnUserSettingsChanged -= OnUserSettingsChanged;
+        Debug.Log("MenuController:OnDestroy");
+    }
+
+    void OnUserSettingsChanged(object sender, UserSettingsEventArgs args)
+    {
+        Global.ApplyUserSettings(args);
     }
 
     // Update is called once per frame
