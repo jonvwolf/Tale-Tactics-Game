@@ -24,7 +24,22 @@ namespace Assets.Scripts
         public static string CurrentScene { get; set; } = string.Empty;
 
         public static event EventHandler<UserSettingsEventArgs> OnUserSettingsChanged;
-        
+
+        public static event EventHandler OnExitGame;
+        public static event EventHandler OnOkExitGame;
+
+        public static void ExitGame()
+        {
+            var ev = OnExitGame;
+            ev?.Invoke(null, EventArgs.Empty);
+        }
+
+        public static void OkExitGame()
+        {
+            var ev = OnOkExitGame;
+            ev?.Invoke(null, EventArgs.Empty);
+        }
+
         public static void UserSettingsChanged(UserSettingsEventArgs args)
         {
             var ev = OnUserSettingsChanged;

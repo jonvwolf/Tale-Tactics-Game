@@ -29,6 +29,8 @@ public class LoadingSceneController : MonoBehaviour
     int TotalAssets = 0;
     int LoadedAssets = 0;
 
+    bool quit = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -103,6 +105,7 @@ public class LoadingSceneController : MonoBehaviour
         Global.ApplyUserSettings(settings);
 
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
+        Global.OnExitGame += OnExitGame;
 
         StartCoroutine(LoadAssets(model));
     }
@@ -110,7 +113,13 @@ public class LoadingSceneController : MonoBehaviour
     void OnDestroy()
     {
         Global.OnUserSettingsChanged -= OnUserSettingsChanged;
+        Global.OnExitGame -= OnExitGame;
         Debug.Log("MenuController:OnDestroy");
+    }
+
+    void OnExitGame(object sender, EventArgs args)
+    {
+        quit = true;
     }
 
     void OnUserSettingsChanged(object sender, UserSettingsEventArgs args)
@@ -134,6 +143,10 @@ public class LoadingSceneController : MonoBehaviour
 
         foreach(var item in model.ReadGameConfigurationModel.Images)
         {
+            if (quit)
+            {
+                break;
+            }
             if (LoadedImages.Contains(item.Id))
             {
                 LoadedAssets++;
@@ -146,6 +159,10 @@ public class LoadingSceneController : MonoBehaviour
 
         foreach (var item in model.ReadGameConfigurationModel.Audios)
         {
+            if (quit)
+            {
+                break;
+            }
             if (LoadedAudios.Contains(item.Id))
             {
                 LoadedAssets++;
@@ -155,7 +172,14 @@ public class LoadingSceneController : MonoBehaviour
             yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
             yield return LoadAsset(null, item);
         }
-        
+
+        if (quit)
+        {
+            Debug.Log("OK to exit...");
+            Global.OkExitGame();
+            yield break;
+        }
+
         LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
         LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
 
@@ -172,6 +196,11 @@ public class LoadingSceneController : MonoBehaviour
         UnityWebRequest www = default;
         try
         {
+            if (quit)
+            {
+                yield break;
+            }
+
             if (image == default)
             {
                 url = audio.AbsoluteUrl;

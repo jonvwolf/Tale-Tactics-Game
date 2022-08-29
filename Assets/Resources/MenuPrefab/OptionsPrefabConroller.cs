@@ -16,6 +16,9 @@ public class OptionsPrefabConroller : MonoBehaviour
     public Toggle tglVsync;
     public Slider sldVolume;
 
+    public Image imgExiting;
+    public TMP_Text txtExiting;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +59,19 @@ public class OptionsPrefabConroller : MonoBehaviour
 
         tglVsync.onValueChanged.AddListener(TglVsync_ValueChanged);
         sldVolume.onValueChanged.AddListener(SldVolume_ValueChanged);
+
+        Global.OnOkExitGame += OnOkExitGame;
+    }
+
+    void OnDestroy()
+    {
+        Global.OnOkExitGame -= OnOkExitGame;
+    }
+
+    void OnOkExitGame(object sender, EventArgs args)
+    {
+        // scene says OK to leave
+        SceneManager.LoadScene(Constants.MainSceneName);
     }
 
     void SldVolume_ValueChanged(float value)
@@ -99,8 +115,11 @@ public class OptionsPrefabConroller : MonoBehaviour
     void BtnExitGame_Click()
     {
         PlayerPrefs.Save();
-        // TODO: scenes have to say OK to leave
-        SceneManager.LoadScene(Constants.MainSceneName);
+        // trigger event
+        Global.ExitGame();
+
+        imgExiting.gameObject.SetActive(true);
+        txtExiting.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
