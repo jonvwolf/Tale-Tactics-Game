@@ -37,7 +37,17 @@ namespace Assets.Scripts.Models
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
+                    foreach (var image in _images)
+                    {
+                        UnityEngine.Object.Destroy(image.Value.Texture);
+                    }
+                    foreach (var audio in _audios)
+                    {
+                        UnityEngine.Object.Destroy(audio.Value.AudioClip);
+                    }
+
+                    _images.Clear();
+                    _audios.Clear();
                 }
 
                 // TODO: set large fields to null

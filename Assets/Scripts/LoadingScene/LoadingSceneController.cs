@@ -173,6 +173,11 @@ public class LoadingSceneController : MonoBehaviour
             yield return LoadAsset(null, item);
         }
 
+        LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
+        LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
+
+        yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
+
         if (quit)
         {
             Debug.Log("OK to exit...");
@@ -180,11 +185,7 @@ public class LoadingSceneController : MonoBehaviour
             yield break;
         }
 
-        LoadedAssets += model.ReadGameConfigurationModel.Minigames.Count;
-        LoadingAssetText.text = $"Loaded asset {LoadedAssets} out of {TotalAssets}...";
-
-        yield return new WaitForSeconds(Constants.WaitForSecondsAfterEachLoadAsset);
-
+        // TODO: if user is unlucky and clicks exit game just after previous check, it will not exit game but just change scene
         SceneManager.LoadScene(Constants.GameSceneName);
     }
 

@@ -22,6 +22,10 @@ namespace Assets.Scripts
         public const float DefaultVolume = 5f;
 
         readonly static string BaseUrl = "https://ht-api.whostreaming.net";
+        public readonly static string HubUrl = "ws://ht-api.whostreaming.net/game-hub";
+
+        public const int HubTimeoutSeconds = 300;
+
         public static string GetGameConfigurationUrl(string gameCode)
         {
             return $"{BaseUrl}/games/{gameCode}/configuration";
