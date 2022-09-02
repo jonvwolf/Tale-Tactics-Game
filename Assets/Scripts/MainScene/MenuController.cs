@@ -89,6 +89,7 @@ public class MenuController : MonoBehaviour
 
     public void GoBackMain_Click()
     {
+        Debug.Log("Credits: Go back main");
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);
     }

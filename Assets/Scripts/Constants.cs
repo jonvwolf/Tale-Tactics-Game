@@ -24,8 +24,8 @@ namespace Assets.Scripts
         readonly static string BaseUrl = "https://localhost:7216";//"https://ht-api.whostreaming.net";
         public readonly static string HubUrl = $"{BaseUrl}/game-hub";
 
-        public const int HubTimeoutSeconds = 15; //300
-        public const int HubStopTimeoutSeconds = 10; //60
+        public const int HubTimeoutSeconds = 300;
+        public const int HubStopTimeoutSeconds = 150;
 
         public static string GetGameConfigurationUrl(string gameCode)
         {

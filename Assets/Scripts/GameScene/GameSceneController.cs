@@ -91,12 +91,12 @@ public class GameSceneController : MonoBehaviour
 
     private void Hub_OnHmPredefinedCommand(object sender, HmCommandPredefinedModel e)
     {
-        throw new NotImplementedException();
+        txtWaitingText.text = e.ToString();
     }
 
     private void Hub_OnHmCommand(object sender, HmCommandModel e)
     {
-        throw new NotImplementedException();
+        txtWaitingText.text = e.ToString();
     }
 
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
@@ -146,6 +146,7 @@ public class GameSceneController : MonoBehaviour
             hub.OnHmCommand -= Hub_OnHmCommand;
             hub.OnHmPredefinedCommand -= Hub_OnHmPredefinedCommand;
 
+            // unsubscribe because this will call `OnConnectionStatusChanged` with connection closed
             await hub.DisposeAsync();
         }
 

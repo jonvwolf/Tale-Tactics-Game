@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,6 @@ namespace Assets.Scripts.Hub
     public class HtHubConnection
     {
         readonly GameCodeModel gameCode;
-        CancellationTokenSource cancellationTokenSource;
         private bool disposedValue;
 
         HubConnection hub;
@@ -40,7 +40,7 @@ namespace Assets.Scripts.Hub
 
             try
             {
-                cancellationTokenSource = new(TimeSpan.FromSeconds(Constants.HubTimeoutSeconds));
+                using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(Constants.HubTimeoutSeconds));
 
                 hub = new HubConnectionBuilder()
                     .WithUrl(Constants.HubUrl, Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets, (options) =>
@@ -86,10 +86,7 @@ namespace Assets.Scripts.Hub
                     await hub.DisposeAsync();
                 }
 
-                cancellationTokenSource.Dispose();
-
                 hub = default;
-                cancellationTokenSource = default;
 
                 Debug.LogError("(Hub) Failed to connect: " + e.ToString());
                 ConnectionStatusChanged(new HubConnectionStatusEventArgs()
@@ -102,7 +99,12 @@ namespace Assets.Scripts.Hub
 
             try
             {
-                await hub.InvokeAsync("JoinGameAsPlayer", gameCode, cancellationTokenSource.Token);
+                await hub.InvokeAsync("JoinGameAsPlayer", gameCode);
+                await PlayerSendLog(new TextLogModel()
+                {
+                    From = "A player",
+                    Message = "Has joined"
+                });
                 return true;
             }
             catch (Exception e)
@@ -152,8 +154,7 @@ namespace Assets.Scripts.Hub
                 Disconnected = true,
                 Exception = arg
             });
-
-            return StopAsync();
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync()
@@ -178,17 +179,13 @@ namespace Assets.Scripts.Hub
 
                 try
                 {
-                    cancellationTokenSource.Cancel();
-
                     using var localToken = new CancellationTokenSource(TimeSpan.FromSeconds(Constants.HubStopTimeoutSeconds));
                     await hub.StopAsync(localToken.Token);
                 }
                 finally
                 {
                     await hub.DisposeAsync();
-                    cancellationTokenSource.Dispose();
                     hub = default;
-                    cancellationTokenSource = default;
                 }
             }
             catch (Exception e)
@@ -201,7 +198,8 @@ namespace Assets.Scripts.Hub
         {
             try
             {
-                await hub.SendAsync("PlayerSendBackHmCommandAsync", gameCode, model, cancellationTokenSource.Token);
+                await hub.SendAsync("PlayerSendBackHmCommand", gameCode, model);
+                Debug.Log("Send back HmCommand: " + model);
             }
             catch (Exception e)
             {
@@ -218,7 +216,8 @@ namespace Assets.Scripts.Hub
         {
             try
             {
-                await hub.SendAsync("PlayerSendBackHmCommandPredefined", gameCode, model, cancellationTokenSource.Token);
+                await hub.SendAsync("PlayerSendBackHmCommandPredefined", gameCode, model);
+                Debug.Log("Send back HmCommandPredefined: " + model);
             }
             catch (Exception e)
             {
@@ -235,7 +234,7 @@ namespace Assets.Scripts.Hub
         {
             try
             {
-                await hub.SendAsync("PlayerSendLog", gameCode, model, cancellationTokenSource.Token);
+                await hub.SendAsync("PlayerSendLog", gameCode, model);
             }
             catch (Exception e)
             {
@@ -259,8 +258,6 @@ namespace Assets.Scripts.Hub
 
                     playerReceiveHmCommandHandler?.Dispose();
                     playerReceiveHmCommandPredefinedHandler?.Dispose();
-
-                    cancellationTokenSource?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
