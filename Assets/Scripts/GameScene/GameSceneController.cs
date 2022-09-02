@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Assets.Scripts.Hub;
 using Assets.Scripts.Models;
 using Assets.Scripts.ServerModels;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -6,21 +7,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameSceneController : MonoBehaviour
 {
     public AudioSource sndWaiting;
     public AudioMixer audioMixer;
 
+    public Canvas cnvError;
+    public TMP_Text txtError;
+    public Button btnCloseErrorCanvas;
+    public Button btnReconnect;
+    public TMP_Text txtWaitingText;
+
     GameCodeModel gameCodeModel;
+    HtHubConnection hub;
 
     bool quit;
-    bool okToExit;
+    bool alreadySentQuit;
     // Start is called before the first frame update
     async void Start()
     {
@@ -44,15 +54,101 @@ public class GameSceneController : MonoBehaviour
 
         StartCoroutine(AudioHelper.FadeIn(sndWaiting, 10f));
 
-        var connection = new HubConnectionBuilder()
-                .WithUrl(Constants.HubUrl)
-                .Build();
+        btnCloseErrorCanvas.onClick.AddListener(() =>
+        {
+            if (!btnReconnect.gameObject.activeInHierarchy)
+            {
+                cnvError.gameObject.SetActive(false);
+            }
+        });
 
-        //await connection.StartAsync();
-        await connection.InvokeAsync("JoinGameAsPlayer", gameModel);
+        btnReconnect.onClick.AddListener(async () =>
+        {
+            btnReconnect.gameObject.SetActive(false);
+            // only when "Disconnected" comes up, it will automatically disconnect
+            if(await hub.ConnectAsync())
+            {
+                txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+            }
+        });
+
+        hub = new HtHubConnection(gameCodeModel);
+        hub.OnConnectionStatusChanged += Hub_OnConnectionStatusChanged;
+        hub.OnHmCommand += Hub_OnHmCommand;
+        hub.OnHmPredefinedCommand += Hub_OnHmPredefinedCommand;
+
+        txtWaitingText.text = "Connecting to hub...";
+        if(await hub.ConnectAsync())
+        {
+            txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+        }
+        else
+        {
+            txtWaitingText.text = "Error connecting to hub...";
+        }
+        
     }
-    void OnDestroy()
+
+    private void Hub_OnHmPredefinedCommand(object sender, HmCommandPredefinedModel e)
     {
+        throw new NotImplementedException();
+    }
+
+    private void Hub_OnHmCommand(object sender, HmCommandModel e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
+    {
+        cnvError.gameObject.SetActive(true);
+        btnReconnect.gameObject.SetActive(false);
+
+        string ex = string.Empty;
+        if (e.Exception != default)
+            ex = $"({e.Exception.Message})";
+
+        if (e.IsReconnecting)
+        {
+            txtError.text = "Lost connection to hub. Reconnecting..." + ex;
+        }
+        else if (e.Disconnected)
+        {
+            // Have to call Connect again
+            txtError.text = "Disconnected from hub." + ex;
+            btnReconnect.gameObject.SetActive(true);
+        }
+        else if (e.Reconnected)
+        {
+            txtError.text = "Connection restored" + ex;
+        }
+        else if (e.InvokeFailed)
+        {
+            txtError.text = "Failed to call hub invoke" + ex;
+        }
+        else if (e.FailedToConnect)
+        {
+            // Have to call Connect again
+            txtError.text = "Not able to connect to hub" + ex;
+            btnReconnect.gameObject.SetActive(true);
+        }
+        else
+        {
+            txtError.text = "This is a bug from Hub_OnConnectionStatusChanged";
+        }
+    }
+
+    async void OnDestroy()
+    {
+        if (hub != default)
+        {
+            hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;
+            hub.OnHmCommand -= Hub_OnHmCommand;
+            hub.OnHmPredefinedCommand -= Hub_OnHmPredefinedCommand;
+
+            await hub.DisposeAsync();
+        }
+
         Global.OnUserSettingsChanged -= OnUserSettingsChanged;
         Global.OnExitGame -= OnExitGame;
         Debug.Log("MenuController:OnDestroy");
@@ -68,18 +164,20 @@ public class GameSceneController : MonoBehaviour
         Global.ApplyUserSettings(args, audioMixer);
     }
     // Update is called once per frame
-    void Update()
+    async void Update()
     {
         if (quit)
         {
-            // TODO
-            okToExit = true;
-
-            // okToExit is decided locally for when it is ok to signal
-            if (okToExit)
+            if (!alreadySentQuit)
             {
+                alreadySentQuit = true;
+                hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;
+                hub.OnHmCommand -= Hub_OnHmCommand;
+                hub.OnHmPredefinedCommand -= Hub_OnHmPredefinedCommand;
+                await hub.StopAsync();
                 Global.OkExitGame();
             }
+            return;
         }
     }
 

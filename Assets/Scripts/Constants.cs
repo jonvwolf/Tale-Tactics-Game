@@ -21,10 +21,11 @@ namespace Assets.Scripts
         public const int VSyncEnabledValue = 1;
         public const float DefaultVolume = 5f;
 
-        readonly static string BaseUrl = "https://ht-api.whostreaming.net";
-        public readonly static string HubUrl = "ws://ht-api.whostreaming.net/game-hub";
+        readonly static string BaseUrl = "https://localhost:7216";//"https://ht-api.whostreaming.net";
+        public readonly static string HubUrl = $"{BaseUrl}/game-hub";
 
-        public const int HubTimeoutSeconds = 300;
+        public const int HubTimeoutSeconds = 15; //300
+        public const int HubStopTimeoutSeconds = 10; //60
 
         public static string GetGameConfigurationUrl(string gameCode)
         {
