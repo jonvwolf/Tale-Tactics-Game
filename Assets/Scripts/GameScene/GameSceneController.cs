@@ -18,6 +18,13 @@ using UnityEngine.UI;
 public class GameSceneController : MonoBehaviour
 {
     public AudioSource sndWaiting;
+    public AudioSource sndBgm2;
+    public Coroutine crFadeIn;
+    public Coroutine crFadeOut;
+    bool isBgm1Playing = true;
+    const float fadeInTime = 10f;
+    const float fadeOutTime = 5f;
+
     public AudioMixer audioMixer;
 
     public Canvas cnvError;
@@ -56,7 +63,7 @@ public class GameSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
 
-        StartCoroutine(AudioHelper.FadeIn(sndWaiting, 10f));
+        crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, fadeInTime));
 
         btnCloseErrorCanvas.onClick.AddListener(() =>
         {
@@ -102,6 +109,7 @@ public class GameSceneController : MonoBehaviour
     {
         txtWaitingText.text = e.ToString();
 
+        bool gotBgm = false;
         if (e.AudioIds != default && e.AudioIds.Count > 0)
         {
             foreach (var id in e.AudioIds)
@@ -113,6 +121,37 @@ public class GameSceneController : MonoBehaviour
                     {
                         soundEffects.PlayOneShot(audio.AudioClip);
                         Debug.Log("Playing sound effect: " + audio.Model.Name);
+                    }
+                    else if(!gotBgm)
+                    {
+                        gotBgm = true;
+
+                        if (isBgm1Playing)
+                        {
+                            isBgm1Playing = false;
+                            if (crFadeIn != default)
+                                StopCoroutine(crFadeIn);
+                            if (crFadeOut != default)
+                                StopCoroutine(crFadeOut);
+
+                            crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, fadeOutTime));
+
+                            sndBgm2.clip = audio.AudioClip;
+                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, fadeInTime));
+                        }
+                        else
+                        {
+                            isBgm1Playing = true;
+                            if (crFadeIn != default)
+                                StopCoroutine(crFadeIn);
+                            if (crFadeOut != default)
+                                StopCoroutine(crFadeOut);
+
+                            crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, fadeOutTime));
+
+                            sndWaiting.clip = audio.AudioClip;
+                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, fadeInTime));
+                        }
                     }
                 }
             }

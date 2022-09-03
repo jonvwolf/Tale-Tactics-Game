@@ -78,10 +78,14 @@ namespace Assets.Scripts.Hub
                     hub.Reconnected -= Hub_Reconnected;
                     hub.Reconnecting -= Hub_Reconnecting;
 
-                    hub.Remove("PlayerReceiveHmCommand");
-                    hub.Remove("PlayerReceiveHmCommandPredefined");
                     playerReceiveHmCommandHandler?.Dispose();
                     playerReceiveHmCommandPredefinedHandler?.Dispose();
+
+                    if (playerReceiveHmCommandHandler != default)
+                        hub.Remove("PlayerReceiveHmCommand");
+
+                    if (playerReceiveHmCommandPredefinedHandler!= default)
+                        hub.Remove("PlayerReceiveHmCommandPredefined");
 
                     await hub.DisposeAsync();
                 }
@@ -171,11 +175,14 @@ namespace Assets.Scripts.Hub
                 hub.Reconnected -= Hub_Reconnected;
                 hub.Reconnecting -= Hub_Reconnecting;
 
-                hub.Remove("PlayerReceiveHmCommand");
-                hub.Remove("PlayerReceiveHmCommandPredefined");
-
                 playerReceiveHmCommandHandler?.Dispose();
                 playerReceiveHmCommandPredefinedHandler?.Dispose();
+
+                if (playerReceiveHmCommandHandler != default)
+                    hub.Remove("PlayerReceiveHmCommand");
+
+                if (playerReceiveHmCommandPredefinedHandler != default)
+                    hub.Remove("PlayerReceiveHmCommandPredefined");
 
                 try
                 {

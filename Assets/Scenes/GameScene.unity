@@ -3340,6 +3340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sndWaiting: {fileID: 1665085848}
+  sndBgm2: {fileID: 1385640844}
   audioMixer: {fileID: 24100000, guid: 5e1bfb2fa23aa6b409bab83395a70e0a, type: 2}
   cnvError: {fileID: 1702482397}
   txtError: {fileID: 110629756}
