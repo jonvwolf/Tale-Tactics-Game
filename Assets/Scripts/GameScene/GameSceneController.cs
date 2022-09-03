@@ -26,8 +26,12 @@ public class GameSceneController : MonoBehaviour
     public Button btnReconnect;
     public TMP_Text txtWaitingText;
 
+    public AudioSource soundEffects;
+
     GameCodeModel gameCodeModel;
     HtHubConnection hub;
+
+    CurrentGameModel currentGameModel;
 
     bool quit;
     bool alreadySentQuit;
@@ -37,14 +41,14 @@ public class GameSceneController : MonoBehaviour
         Global.CurrentScene = Constants.GameSceneName;
 
         var gameModel = Global.GetGameConfiguration();
-        var game = Global.CurrentGameModel;
-        if (gameModel == default || game == default)
+        currentGameModel = Global.CurrentGameModel;
+        if (gameModel == default || currentGameModel == default)
         {
             SceneManager.LoadScene(Constants.MainSceneName);
             return;
         }
 
-        gameCodeModel = new GameCodeModel(game.GameCode);
+        gameCodeModel = new GameCodeModel(currentGameModel.GameCode);
 
         var settings = Global.GetCurrentUserSettings();
         Global.ApplyUserSettings(settings);
@@ -97,6 +101,22 @@ public class GameSceneController : MonoBehaviour
     private void Hub_OnHmCommand(object sender, HmCommandModel e)
     {
         txtWaitingText.text = e.ToString();
+
+        if (e.AudioIds != default && e.AudioIds.Count > 0)
+        {
+            foreach (var id in e.AudioIds)
+            {
+                var audio = currentGameModel.GetAudio(id);
+                if (audio != default)
+                {
+                    if (!audio.Model.IsBgm)
+                    {
+                        soundEffects.PlayOneShot(audio.AudioClip);
+                        Debug.Log("Playing sound effect: " + audio.Model.Name);
+                    }
+                }
+            }
+        }
     }
 
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)

@@ -31,6 +31,8 @@ public class LoadingSceneController : MonoBehaviour
 
     bool quit = false;
 
+    bool errorHappened;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -107,6 +109,11 @@ public class LoadingSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
 
+        btnRetry.onClick.AddListener(() =>
+        {
+            StartCoroutine(LoadAssets(model));
+        });
+
         StartCoroutine(LoadAssets(model));
     }
 
@@ -138,12 +145,17 @@ public class LoadingSceneController : MonoBehaviour
         btnRetry.enabled = false;
         btnRetry.gameObject.SetActive(false);
 
+        errorHappened = false;
         TotalAssets = model.ReadGameConfigurationModel.Images.Count + model.ReadGameConfigurationModel.Audios.Count + model.ReadGameConfigurationModel.Minigames.Count;
         LoadedAssets = 0;
 
         foreach(var item in model.ReadGameConfigurationModel.Images)
         {
             if (quit)
+            {
+                break;
+            }
+            if (errorHappened)
             {
                 break;
             }
@@ -160,6 +172,10 @@ public class LoadingSceneController : MonoBehaviour
         foreach (var item in model.ReadGameConfigurationModel.Audios)
         {
             if (quit)
+            {
+                break;
+            }
+            if (errorHappened)
             {
                 break;
             }
@@ -182,6 +198,11 @@ public class LoadingSceneController : MonoBehaviour
         {
             Debug.Log("OK to exit...");
             Global.OkExitGame();
+            yield break;
+        }
+
+        if (errorHappened)
+        {
             yield break;
         }
 
@@ -220,6 +241,7 @@ public class LoadingSceneController : MonoBehaviour
                 ErrorText.text = $"File does not exist: {url}";
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                errorHappened = true;
             }
             else if (www.responseCode >= 500 && www.responseCode <= 599)
             {
@@ -227,6 +249,7 @@ public class LoadingSceneController : MonoBehaviour
                 Debug.LogError("Server error: " + www.downloadHandler.text);
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                errorHappened = true;
             }
             else if (www.responseCode == 200)
             {
@@ -265,7 +288,8 @@ public class LoadingSceneController : MonoBehaviour
                     ErrorText.text = "Exception happened: " + e.Message + ". Url: " + url;
                     btnRetry.enabled = true;
                     btnRetry.gameObject.SetActive(true);
-                    throw;
+                    errorHappened = true;
+                    Debug.LogError("Exception happened: " + e.ToString());
                 }
             }
             else if (www.result != UnityWebRequest.Result.Success)
@@ -273,12 +297,14 @@ public class LoadingSceneController : MonoBehaviour
                 ErrorText.text = "Web request was not successful: " + www.error;
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                errorHappened = true;
             }
             else
             {
                 ErrorText.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                errorHappened = true;
             }
         }
         finally

@@ -31,6 +31,24 @@ namespace Assets.Scripts.Models
             _audios[id] = model;
         }
 
+        public LoadedAudioAssetModel GetAudio(long id)
+        {
+            if (_audios.TryGetValue(id, out var model))
+            {
+                return model;
+            }
+            return default;
+        }
+
+        public LoadedImageAssetModel GetImage(long id)
+        {
+            if (_images.TryGetValue(id, out var model))
+            {
+                return model;
+            }
+            return default;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

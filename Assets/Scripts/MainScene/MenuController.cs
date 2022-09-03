@@ -28,7 +28,7 @@ public class MenuController : MonoBehaviour
         if (Constants.IsDebug)
         {
             //StartCoroutine(GetStoryModel("92086"));
-            txtGameCode.text = "92086";
+            txtGameCode.text = "3fe7b";
         }
 
         Global.CurrentScene = Constants.MainSceneName;
