@@ -59,6 +59,10 @@ namespace Assets.Scripts.Models
                     {
                         UnityEngine.Object.Destroy(image.Value.Texture);
                     }
+                    foreach (var image in _images)
+                    {
+                        UnityEngine.Object.Destroy(image.Value.Sprite);
+                    }
                     foreach (var audio in _audios)
                     {
                         UnityEngine.Object.Destroy(audio.Value.AudioClip);

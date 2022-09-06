@@ -30,4 +30,10 @@ public class OpenSettingsBtnController : MonoBehaviour
     {
         
     }
+
+    private void OnDestroy()
+    {
+        btnSelfReference.onClick.RemoveAllListeners();
+        Destroy(prefabCanvas1);
+    }
 }

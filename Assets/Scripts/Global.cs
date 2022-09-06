@@ -20,6 +20,7 @@ namespace Assets.Scripts
         /// For Game scene
         /// </summary>
         public static CurrentGameModel CurrentGameModel { get; set; }
+        public static event EventHandler<Canvas> OnCanvasChangedForOptionsBtn;
 
         public static string CurrentScene { get; set; } = string.Empty;
 
@@ -28,6 +29,11 @@ namespace Assets.Scripts
         public static event EventHandler OnExitGame;
         public static event EventHandler OnOkExitGame;
 
+        public static void CanvasChangedForOptionsBtn(Canvas c)
+        {
+            var ev = OnCanvasChangedForOptionsBtn;
+            ev?.Invoke(null, c);
+        }
         public static void ExitGame()
         {
             var ev = OnExitGame;

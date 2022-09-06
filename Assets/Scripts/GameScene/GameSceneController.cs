@@ -12,20 +12,37 @@ using Unity.VisualScripting;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameSceneController : MonoBehaviour
 {
+    public CanvasGroup cgGameCanvas;
+
     public AudioSource sndWaiting;
     public AudioSource sndBgm2;
-    public Coroutine crFadeIn;
-    public Coroutine crFadeOut;
+    Coroutine crFadeIn;
+    Coroutine crFadeOut;
     bool isBgm1Playing = true;
-    const float fadeInTime = 10f;
-    const float fadeOutTime = 5f;
+    long idAudioBgmPlaying = 0;
+
+    bool receivedFirstHmCommand;
 
     public AudioMixer audioMixer;
+
+    public Canvas cnvWaiting;
+    public Canvas cnvGame;
+    public GameObject panelImage;
+    bool isImage1Showing = true;
+    Coroutine crImageFadeIn = default;
+    Coroutine crImageFadeOut = default;
+    long idImageShowing = 0;
+    public Image imgImage1;
+    public Image imgImage2;
+
+    public GameObject panelTimer;
+    public GameObject panelText;
 
     public Canvas cnvError;
     public TMP_Text txtError;
@@ -63,7 +80,7 @@ public class GameSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
 
-        crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, fadeInTime));
+        crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
 
         btnCloseErrorCanvas.onClick.AddListener(() =>
         {
@@ -103,12 +120,28 @@ public class GameSceneController : MonoBehaviour
     private void Hub_OnHmPredefinedCommand(object sender, HmCommandPredefinedModel e)
     {
         txtWaitingText.text = e.ToString();
+        //TODO: clear idAudioBgmPlaying, and ImageId, etc.
     }
 
     private void Hub_OnHmCommand(object sender, HmCommandModel e)
     {
-        txtWaitingText.text = e.ToString();
+        if (!receivedFirstHmCommand)
+        {
+            StartCoroutine(AudioHelper.FadeOutCanvasGroup(cgGameCanvas, Constants.ImageFadeOutTime, cnvWaiting));
 
+            Global.CanvasChangedForOptionsBtn(cnvGame);
+            cnvGame.gameObject.SetActive(true);
+            // panel image will be always active
+            panelImage.gameObject.SetActive(true);
+        }
+
+        Handle_OnHmCommand_Audio(e);
+        Handle_OnHmCommand_Image(e);
+
+        receivedFirstHmCommand = true;
+    }
+    void Handle_OnHmCommand_Audio(HmCommandModel e)
+    {
         bool gotBgm = false;
         if (e.AudioIds != default && e.AudioIds.Count > 0)
         {
@@ -122,9 +155,15 @@ public class GameSceneController : MonoBehaviour
                         soundEffects.PlayOneShot(audio.AudioClip);
                         Debug.Log("Playing sound effect: " + audio.Model.Name);
                     }
-                    else if(!gotBgm)
+                    else if (!gotBgm)
                     {
                         gotBgm = true;
+
+                        if (idAudioBgmPlaying == id)
+                        {
+                            continue;
+                        }
+                        idAudioBgmPlaying = id;
 
                         if (isBgm1Playing)
                         {
@@ -134,10 +173,11 @@ public class GameSceneController : MonoBehaviour
                             if (crFadeOut != default)
                                 StopCoroutine(crFadeOut);
 
-                            crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, fadeOutTime));
+                            if (sndWaiting.isPlaying)
+                                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
 
                             sndBgm2.clip = audio.AudioClip;
-                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, fadeInTime));
+                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, Constants.AudioFadeInTime));
                         }
                         else
                         {
@@ -147,17 +187,80 @@ public class GameSceneController : MonoBehaviour
                             if (crFadeOut != default)
                                 StopCoroutine(crFadeOut);
 
-                            crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, fadeOutTime));
+                            if (sndBgm2.isPlaying)
+                                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
 
                             sndWaiting.clip = audio.AudioClip;
-                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, fadeInTime));
+                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
                         }
                     }
                 }
             }
         }
-    }
+        else
+        {
+            if (!receivedFirstHmCommand)
+            {
+                if (crFadeIn != default)
+                    StopCoroutine(crFadeIn);
 
+                // this is to fade out the waiting background sound when the first command doesn't have an audio
+                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+            }
+        }
+    }
+    void Handle_OnHmCommand_Image(HmCommandModel e)
+    {
+        if (e.ImageId.HasValue && e.ImageId.Value > 0)
+        {
+            var image = currentGameModel.GetImage(e.ImageId.Value);
+            if (image != default)
+            {
+                if(idImageShowing != e.ImageId)
+                {
+                    idImageShowing = e.ImageId.Value;
+                    if (isImage1Showing)
+                    {
+                        isImage1Showing = false;
+                        if (crImageFadeIn != default)
+                            StopCoroutine(crImageFadeIn);
+                        if (crImageFadeOut != default)
+                            StopCoroutine(crImageFadeOut);
+
+                        if (imgImage2.color.a > 0)
+                            crImageFadeOut = StartCoroutine(AudioHelper.FadeOutImage(imgImage2, Constants.ImageFadeOutTime));
+
+                        imgImage1.sprite = image.Sprite;
+                        crImageFadeIn = StartCoroutine(AudioHelper.FadeInImage(imgImage1, Constants.ImageFadeInTime));
+                    }
+                    else
+                    {
+                        isImage1Showing = true;
+
+                        if (crImageFadeIn != default)
+                            StopCoroutine(crImageFadeIn);
+
+                        if (crImageFadeOut != default)
+                            StopCoroutine(crImageFadeOut);
+
+                        if (imgImage1.color.a > 0)
+                            crImageFadeOut = StartCoroutine(AudioHelper.FadeOutImage(imgImage1, Constants.ImageFadeOutTime));
+
+                        imgImage2.sprite = image.Sprite;
+                        crImageFadeIn = StartCoroutine(AudioHelper.FadeInImage(imgImage2, Constants.ImageFadeInTime));
+                    }
+                }
+            }
+        }
+    }
+    void Handle_OnHmCommand_Timer(HmCommandModel e)
+    {
+
+    }
+    void Handle_OnHmCommand_Text(HmCommandModel e)
+    {
+
+    }
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
     {
         cnvError.gameObject.SetActive(true);
@@ -231,6 +334,11 @@ public class GameSceneController : MonoBehaviour
             if (!alreadySentQuit)
             {
                 alreadySentQuit = true;
+                await hub.PlayerSendLog(new TextLogModel()
+                {
+                    From = "A player",
+                    Message = "Has left the game"
+                });
                 hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;
                 hub.OnHmCommand -= Hub_OnHmCommand;
                 hub.OnHmPredefinedCommand -= Hub_OnHmPredefinedCommand;

@@ -27,6 +27,11 @@ namespace Assets.Scripts
         public const int HubTimeoutSeconds = 300;
         public const int HubStopTimeoutSeconds = 150;
 
+        public const float AudioFadeInTime = 5f;
+        public const float AudioFadeOutTime = 5f;
+        public const float ImageFadeInTime = 5f;
+        public const float ImageFadeOutTime = 5f;
+
         public static string GetGameConfigurationUrl(string gameCode)
         {
             return $"{BaseUrl}/games/{gameCode}/configuration";

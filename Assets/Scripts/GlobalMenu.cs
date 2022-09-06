@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,13 +31,28 @@ public class GlobalMenu : MonoBehaviour
         prefabOpenSettings = (GameObject)Instantiate(Resources.Load("MenuPrefab/Open_settings_btn", typeof(GameObject)));
 
         prefabOpenSettings.transform.SetParent(canvas.transform, false);
-        
+
+        Global.OnCanvasChangedForOptionsBtn += Global_OnCanvasChangedForOptionsBtn;
+
         Debug.Log("Open settings btn OK");
+    }
+
+    private void Global_OnCanvasChangedForOptionsBtn(object sender, Canvas e)
+    {
+        Destroy(prefabOpenSettings);
+        prefabOpenSettings = (GameObject)Instantiate(Resources.Load("MenuPrefab/Open_settings_btn", typeof(GameObject)));
+
+        prefabOpenSettings.transform.SetParent(e.transform, false);
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    private void OnDestroy()
+    {
+        Global.OnCanvasChangedForOptionsBtn -= Global_OnCanvasChangedForOptionsBtn;
+        Destroy(prefabOpenSettings);
     }
 }

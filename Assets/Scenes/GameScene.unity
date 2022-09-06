@@ -158,8 +158,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -12.024, y: -206.76}
-  m_SizeDelta: {x: 775.95, y: 36.557}
+  m_AnchoredPosition: {x: -11.573, y: -206.76}
+  m_SizeDelta: {x: 776.85, y: 36.557}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &110629756
 MonoBehaviour:
@@ -293,8 +293,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -12.023, y: -206.68336}
-  m_SizeDelta: {x: 775.95, y: 36.4017}
+  m_AnchoredPosition: {x: -11.573, y: -206.68336}
+  m_SizeDelta: {x: 776.85, y: 36.4017}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &205815734
 MonoBehaviour:
@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.122641504, g: 0.122641504, b: 0.122641504, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1577,7 +1577,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &1087454671
 RectTransform:
@@ -1597,7 +1597,7 @@ RectTransform:
   - {fileID: 924189227}
   - {fileID: 1197149104}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1616,8 +1616,9 @@ GameObject:
   - component: {fileID: 1102643209}
   - component: {fileID: 1102643208}
   - component: {fileID: 1102643207}
+  - component: {fileID: 1102643211}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Waiting Canvas
   m_TagString: maincanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1682,7 +1683,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1102643210
 RectTransform:
@@ -1703,13 +1704,25 @@ RectTransform:
   - {fileID: 811156556}
   - {fileID: 1662727550}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &1102643211
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1102643206}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1125877354
 GameObject:
   m_ObjectHideFlags: 0
@@ -1915,7 +1928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2053,7 +2066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 367.54, y: -197.27}
+  m_AnchoredPosition: {x: 368.45, y: -197.28}
   m_SizeDelta: {x: 16.8142, y: 17.5851}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1256903709
@@ -2473,7 +2486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2535,7 +2548,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 323.7, y: -197.28}
+  m_AnchoredPosition: {x: 329.29, y: -197.28}
   m_SizeDelta: {x: 61.5081, y: 17.5851}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1585937613
@@ -3325,7 +3338,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1886821006
 MonoBehaviour:
@@ -3339,9 +3352,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530820993ad778345a43e93c23bb12f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cgGameCanvas: {fileID: 1102643211}
   sndWaiting: {fileID: 1665085848}
   sndBgm2: {fileID: 1385640844}
   audioMixer: {fileID: 24100000, guid: 5e1bfb2fa23aa6b409bab83395a70e0a, type: 2}
+  cnvWaiting: {fileID: 1102643209}
+  cnvGame: {fileID: 1087454670}
+  panelImage: {fileID: 1497025199}
+  imgImage1: {fileID: 207912207}
+  imgImage2: {fileID: 1208823191}
+  panelTimer: {fileID: 924189226}
+  panelText: {fileID: 1197149103}
   cnvError: {fileID: 1702482397}
   txtError: {fileID: 110629756}
   btnCloseErrorCanvas: {fileID: 1256903709}
