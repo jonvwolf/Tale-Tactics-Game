@@ -3,6 +3,7 @@ using Assets.Scripts.Hub;
 using Assets.Scripts.Models;
 using Assets.Scripts.ServerModels;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -35,6 +36,11 @@ public class GameSceneController : MonoBehaviour
     public Image imgImage2;
 
     public GameObject panelTimer;
+    public TMP_Text txtTimer;
+    public Coroutine crTimer;
+    public AudioSource sndTimerTick;
+    public AudioSource sndTimerEnded;
+
     public GameObject panelText;
     /// <summary>
     /// This is the text to show from incoming HmCommand
@@ -124,6 +130,16 @@ public class GameSceneController : MonoBehaviour
         if (e.StopSoundEffects.HasValue && e.StopSoundEffects.Value)
         {
             //TODO: welp.. can't stop play playoneshots
+
+            if (crTimer != default)
+                StopCoroutine(crTimer);
+
+            if (sndTimerTick.isPlaying)
+                sndTimerTick.Stop();
+            if (sndTimerEnded.isPlaying)
+                sndTimerEnded.Stop();
+
+            panelTimer.SetActive(false);
         }
 
         if (e.ClearScreen.HasValue && e.ClearScreen.Value)
@@ -210,6 +226,7 @@ public class GameSceneController : MonoBehaviour
     {
         FirstReceviedHmCommand();
 
+        Handle_OnHmCommand_Timer(e);
         Handle_OnHmCommand_Audio(e);
         Handle_OnHmCommand_Image(e);
         Handle_OnHmCommand_Text(e);
@@ -332,8 +349,37 @@ public class GameSceneController : MonoBehaviour
     }
     void Handle_OnHmCommand_Timer(HmCommandModel e)
     {
+        if (e.Timer.HasValue && e.Timer.Value > 0)
+        {
+            panelTimer.SetActive(true);
+            if (crTimer != default)
+                StopCoroutine(crTimer);
 
+            crTimer = StartCoroutine(StartTimer(e.Timer.Value));
+        }
     }
+
+    IEnumerator StartTimer(long timer)
+    {
+        sndTimerTick.Play();
+        txtTimer.text = $"{timer}s";
+        while (timer > 0)
+        {
+            yield return new WaitForSeconds(1);
+            timer--;
+            txtTimer.text = $"{timer}s";
+        }
+        sndTimerTick.Stop();
+
+        sndTimerEnded.Play();
+        while (timer > -4)
+        {
+            timer--;
+            yield return new WaitForSeconds(1);
+        }
+        panelTimer.SetActive(false);
+    }
+
     void Handle_OnHmCommand_Text(HmCommandModel e)
     {
         if (!string.IsNullOrEmpty(e.Text))
