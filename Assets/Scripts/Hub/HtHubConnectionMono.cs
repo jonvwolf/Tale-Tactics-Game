@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Models;
+﻿#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
+
+using Assets.Scripts.Models;
 using Assets.Scripts.ServerModels;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
@@ -12,7 +14,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Hub
 {
-    public class HtHubConnection
+    public class HtHubConnectionMono : IHtHubConnection
     {
         readonly GameCodeModel gameCode;
         private bool disposedValue;
@@ -26,7 +28,7 @@ namespace Assets.Scripts.Hub
         IDisposable playerReceiveHmCommandHandler;
         IDisposable playerReceiveHmCommandPredefinedHandler;
 
-        public HtHubConnection(GameCodeModel gameCodeModel)
+        public HtHubConnectionMono(GameCodeModel gameCodeModel)
         {
             gameCode = gameCodeModel;
         }
@@ -288,3 +290,4 @@ namespace Assets.Scripts.Hub
         }
     }
 }
+#endif

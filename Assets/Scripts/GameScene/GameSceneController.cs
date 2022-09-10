@@ -56,7 +56,7 @@ public class GameSceneController : MonoBehaviour
     public AudioSource soundEffects;
 
     GameCodeModel gameCodeModel;
-    HtHubConnection hub;
+    IHtHubConnection hub;
 
     CurrentGameModel currentGameModel;
 
@@ -103,7 +103,11 @@ public class GameSceneController : MonoBehaviour
             }
         });
 
-        hub = new HtHubConnection(gameCodeModel);
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
+        hub = new HtHubConnectionMono(gameCodeModel);
+#elif UNITY_WEBGL
+        hub = new HtHubConnectionWebGl(gameCodeModel);
+#endif
         hub.OnConnectionStatusChanged += Hub_OnConnectionStatusChanged;
         hub.OnHmCommand += Hub_OnHmCommand;
         hub.OnHmPredefinedCommand += Hub_OnHmPredefinedCommand;
