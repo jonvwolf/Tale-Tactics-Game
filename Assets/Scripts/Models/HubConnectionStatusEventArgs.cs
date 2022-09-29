@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace Assets.Scripts.Models
         public bool Disconnected { get; set; }
         public bool FailedToConnect { get; set; }
         public bool InvokeFailed { get; set; }
+        [JsonIgnore]
         public Exception Exception { get; set; }
     }
 }

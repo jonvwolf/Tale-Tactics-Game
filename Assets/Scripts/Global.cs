@@ -29,6 +29,8 @@ namespace Assets.Scripts
         public static event EventHandler OnExitGame;
         public static event EventHandler OnOkExitGame;
 
+        public static event EventHandler<JsLinkEventArgs> OnJsLinkEvent;
+
         public static void CanvasChangedForOptionsBtn(Canvas c)
         {
             var ev = OnCanvasChangedForOptionsBtn;
@@ -49,6 +51,12 @@ namespace Assets.Scripts
         public static void UserSettingsChanged(UserSettingsEventArgs args)
         {
             var ev = OnUserSettingsChanged;
+            ev?.Invoke(null, args);
+        }
+
+        public static void JsLinkEventArgs(JsLinkEventArgs args)
+        {
+            var ev = OnJsLinkEvent;
             ev?.Invoke(null, args);
         }
 
