@@ -1,0 +1,14 @@
+{
+  "name": "webgl-js-project",
+  "version": "1.0.0",
+  "description": "JS project to use missing functionality in unity webGL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jonwolfdev@gmail.com",
+  "license": "Copyright 2022 jonwolfdev@gmail",
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}
