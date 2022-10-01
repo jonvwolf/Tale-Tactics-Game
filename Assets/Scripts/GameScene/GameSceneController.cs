@@ -60,6 +60,9 @@ public class GameSceneController : MonoBehaviour
 
     CurrentGameModel currentGameModel;
 
+    // This is to not show an error when it first connects because with JS it will be notified with event
+    bool isFirstConnectedJs = true;
+
     bool quit;
     bool alreadySentQuit;
     // Start is called before the first frame update
@@ -414,13 +417,21 @@ public class GameSceneController : MonoBehaviour
     }
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
     {
-        cnvError.gameObject.SetActive(true);
-        btnReconnect.gameObject.SetActive(false);
-
         string ex = string.Empty;
-        if (e.Exception != default)
-            ex = $"({e.Exception.Message})";
 
+        if (isFirstConnectedJs && e.ConnectedByJs)
+        {
+            isFirstConnectedJs = false;
+        }
+        else
+        {
+            cnvError.gameObject.SetActive(true);
+            btnReconnect.gameObject.SetActive(false);
+
+            if (e.Exception != default)
+                ex = $"({e.Exception.Message})";
+        }
+        
         if (e.IsReconnecting)
         {
             txtError.text = "Lost connection to hub. Reconnecting..." + ex;
@@ -428,7 +439,7 @@ public class GameSceneController : MonoBehaviour
         else if (e.Disconnected)
         {
             // Have to call Connect again
-            txtError.text = "Disconnected from hub." + ex;
+            txtError.text = "Disconnected from hub. If problem persists, exit game and enter game again." + ex;
             btnReconnect.gameObject.SetActive(true);
         }
         else if (e.Reconnected)
@@ -437,12 +448,12 @@ public class GameSceneController : MonoBehaviour
         }
         else if (e.InvokeFailed)
         {
-            txtError.text = "Failed to call hub invoke" + ex;
+            txtError.text = "Failed to call hub invoke. If problem persists, exit game and enter game again." + ex;
         }
         else if (e.FailedToConnect)
         {
             // Have to call Connect again
-            txtError.text = "Not able to connect to hub" + ex;
+            txtError.text = "Not able to connect to hub. If problem persists, exit game and enter game again." + ex;
             btnReconnect.gameObject.SetActive(true);
         }
         else if (e.ConnectedByJs)
