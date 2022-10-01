@@ -145,6 +145,7 @@ namespace Assets.Scripts.Hub
 
         private Task Hub_Reconnected(string arg)
         {
+            // TODO: rejoin as player with game code
             ConnectionStatusChanged(new HubConnectionStatusEventArgs()
             {
                 Reconnected = true

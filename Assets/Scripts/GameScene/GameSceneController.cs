@@ -97,9 +97,18 @@ public class GameSceneController : MonoBehaviour
         {
             btnReconnect.gameObject.SetActive(false);
             // only when "Disconnected" comes up, it will automatically disconnect
-            if(await hub.ConnectAsync())
+            txtWaitingText.text = "Trying to reconnect...";
+            if (await hub.ConnectAsync())
             {
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
                 txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+                txtError.text = "Connected, you may now close this message";
+                // for webgl it will be called through connection status event
+#endif
+            }
+            else
+            {
+                txtWaitingText.text = "Error connecting to hub...";
             }
         });
 
@@ -115,13 +124,16 @@ public class GameSceneController : MonoBehaviour
         txtWaitingText.text = "Connecting to hub...";
         if(await hub.ConnectAsync())
         {
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
             txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+            // for webgl it will be called through connection status event
+#endif
         }
         else
         {
             txtWaitingText.text = "Error connecting to hub...";
         }
-        
+
     }
 
     private void Hub_OnHmPredefinedCommand(object sender, HmCommandPredefinedModel e)
@@ -421,7 +433,7 @@ public class GameSceneController : MonoBehaviour
         }
         else if (e.Reconnected)
         {
-            txtError.text = "Connection restored" + ex;
+            txtError.text = "Connection restored, you may now close this message. " + ex;
         }
         else if (e.InvokeFailed)
         {
@@ -432,6 +444,11 @@ public class GameSceneController : MonoBehaviour
             // Have to call Connect again
             txtError.text = "Not able to connect to hub" + ex;
             btnReconnect.gameObject.SetActive(true);
+        }
+        else if (e.ConnectedByJs)
+        {
+            txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+            txtError.text = "Connected, you may now close this message";
         }
         else
         {

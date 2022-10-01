@@ -14,6 +14,7 @@ namespace Assets.Scripts.Models
         public bool Disconnected { get; set; }
         public bool FailedToConnect { get; set; }
         public bool InvokeFailed { get; set; }
+        public bool ConnectedByJs { get; set; }
         [JsonIgnore]
         public Exception Exception { get; set; }
     }

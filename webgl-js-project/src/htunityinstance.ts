@@ -12,16 +12,19 @@ export class HtUnityInstance {
 
     public OnHmCommand(model:HmCommandModel):void{
         const str = JSON.stringify(model);
-        this.unity.HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', '/*OnHmCommand*/' + str);
+        console.log('Ready to send to JsLink JSON string', str, model);
+        this.unity.SendMessage('JsLink', 'InvokeEvent', '/*OnHmCommand*/' + str);
     }
 
     public OnHmPredefinedCommand(model:HmPredefinedCommandModel):void{
         const str = JSON.stringify(model);
-        this.unity.HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', '/*OnHmPredefinedCommand*/' + str);
+        console.log('Ready to send to JsLink JSON string', str, model);
+        this.unity.SendMessage('JsLink', 'InvokeEvent', '/*OnHmPredefinedCommand*/' + str);
     }
 
     public OnConnectionStatusChanged(model:ConnectionStatusChangedModel):void{
         const str = JSON.stringify(model);
-        this.unity.HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', '/*OnConnectionStatusChangedType*/' + str);
+        console.log('Ready to send to JsLink JSON string', str, model);
+        this.unity.SendMessage('JsLink', 'InvokeEvent', '/*OnConnectionStatusChangedType*/' + str);
     }
 }
