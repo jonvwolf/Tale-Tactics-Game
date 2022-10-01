@@ -207,6 +207,7 @@ namespace Assets.Scripts.Hub
         {
             try
             {
+                // invoke or send? I am using invoke in js
                 await hub.SendAsync("PlayerSendBackHmCommand", gameCode, model);
                 Debug.Log("Send back HmCommand: " + model);
             }

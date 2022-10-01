@@ -1,15 +1,31 @@
-//import { hello } from "./src/lib";
+/*
+	Add this bundle.js to index.html (unity index.html)
+		-> <script src="bundle.js"></script>
+	To get unity reference in index.html
+		-> .then((unityInstance) => { window.HtUnityInstance = unityInstance;
+*/
+import { HtHub } from "./hthub";
 
-//alert('ok: ' + hello('me'));
+console.log('HtHubJSLink Loaded');
 
-//import _ from 'lodash';
+let htHub = new HtHub();
 
-function component() {
-  const element = document.createElement('div');
+(window as any).HtConnect = function(gameCode: string, url: string) {
+  console.log('Called HtConnect v6', gameCode, url);
+  (window as any).HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', '/*TestType*/{}');
 
-  element.innerHTML = 'hi from myself';
+  htHub.setVars(url, gameCode, (window as any).HtUnityInstance);
+  htHub.connect();
+};
 
-  return element;
-}
+(window as any).HtStop = function() {
+  console.log('Called HtStop');
 
-document.body.appendChild(component());
+  htHub.stop();
+};
+
+(window as any).HtDispose = function() {
+  console.log('Called HtDispose');
+
+  htHub.dispose();
+};
