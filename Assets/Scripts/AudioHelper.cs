@@ -22,23 +22,26 @@ namespace Assets.Scripts
             
             audioSource.volume = 0;
             audioSource.Stop();
+            Debug.Log("Audio is faded out");
             yield break;
         }
         public static IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
         {
-            audioSource.Play();
             // The reason is set to 0, (different than image) is that is hard to notice the change
             // because the other sound was fading in, so the fadeout that was converted into fade in, will be suddenly 0 but
             // the other sound that was fading in but now fading out, is sounds ok, because you can't hardly notice the change
             audioSource.volume = 0;
 
+            audioSource.Play();
+            
             while (audioSource.volume < 1)
             {
-                audioSource.volume += Time.deltaTime / FadeTime;
+                    audioSource.volume += Time.deltaTime / FadeTime;
                 yield return null;
             }
 
             audioSource.volume = 1f;
+            Debug.Log("Audio is faded in");
             yield break;
         }
 

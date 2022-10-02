@@ -15,7 +15,7 @@ public class GameSceneController : MonoBehaviour
     public CanvasGroup cgGameCanvas;
 
     public AudioSource sndWaiting;
-    public AudioSource sndBgm2;
+    
     Coroutine crFadeIn;
     Coroutine crFadeOut;
     bool isBgm1Playing = true;
@@ -54,6 +54,8 @@ public class GameSceneController : MonoBehaviour
     public TMP_Text txtWaitingText;
 
     public AudioSource soundEffects;
+
+    public AudioMixerGroup MasterVolume;
 
     GameCodeModel gameCodeModel;
     IHtHubConnection hub;
@@ -201,27 +203,34 @@ public class GameSceneController : MonoBehaviour
 
         if (e.StopBgm.HasValue && e.StopBgm.Value)
         {
-            idAudioBgmPlaying = 0;
-            if (crFadeIn != default)
-                StopCoroutine(crFadeIn);
-            if (crFadeOut != default)
-                StopCoroutine(crFadeOut);
-
-            if (isBgm1Playing)
+            try
             {
-                if (sndBgm2.isPlaying)
-                    sndBgm2.Stop();
-                if (sndWaiting.isPlaying)
-                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
-            }
-            else
-            {
-                if (sndWaiting.isPlaying)
-                    sndWaiting.Stop();
-                if (sndBgm2.isPlaying)
-                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
-            }
+                idAudioBgmPlaying = 0;
+                if (crFadeIn != default)
+                    StopCoroutine(crFadeIn);
+                if (crFadeOut != default)
+                    StopCoroutine(crFadeOut);
 
+                if (isBgm1Playing)
+                {
+                    //if (sndBgm2.isPlaying)
+                        //sndBgm2.Stop();
+                    if (sndWaiting.isPlaying)
+                        crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+                }
+                else
+                {
+                    if (sndWaiting.isPlaying)
+                        sndWaiting.Stop();
+                    //if (sndBgm2.isPlaying)
+                        //crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Exception S03: {ex}");
+            }
         }
 
         // this has to be here
@@ -265,6 +274,8 @@ public class GameSceneController : MonoBehaviour
                 {
                     if (!audio.Model.IsBgm)
                     {
+                        // Fix webgl audio
+                        soundEffects.time = 0;
                         soundEffects.PlayOneShot(audio.AudioClip);
                         Debug.Log("Playing sound effect: " + audio.Model.Name);
                     }
@@ -278,33 +289,40 @@ public class GameSceneController : MonoBehaviour
                         }
                         idAudioBgmPlaying = id;
 
-                        if (isBgm1Playing)
+                        try
                         {
-                            isBgm1Playing = false;
-                            if (crFadeIn != default)
-                                StopCoroutine(crFadeIn);
-                            if (crFadeOut != default)
-                                StopCoroutine(crFadeOut);
+                            if (isBgm1Playing)
+                            {
+                                isBgm1Playing = false;
+                                if (crFadeIn != default)
+                                    StopCoroutine(crFadeIn);
+                                if (crFadeOut != default)
+                                    StopCoroutine(crFadeOut);
 
-                            if (sndWaiting.isPlaying)
-                                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+                                if (sndWaiting.isPlaying)
+                                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
 
-                            sndBgm2.clip = audio.AudioClip;
-                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, Constants.AudioFadeInTime));
+                                //sndBgm2.clip = audio.AudioClip;
+                                //crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, Constants.AudioFadeInTime));
+                            }
+                            else
+                            {
+                                isBgm1Playing = true;
+                                if (crFadeIn != default)
+                                    StopCoroutine(crFadeIn);
+                                if (crFadeOut != default)
+                                    StopCoroutine(crFadeOut);
+
+                                //if (sndBgm2.isPlaying)
+                                    //crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
+
+                                sndWaiting.clip = audio.AudioClip;
+                                crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            isBgm1Playing = true;
-                            if (crFadeIn != default)
-                                StopCoroutine(crFadeIn);
-                            if (crFadeOut != default)
-                                StopCoroutine(crFadeOut);
-
-                            if (sndBgm2.isPlaying)
-                                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
-
-                            sndWaiting.clip = audio.AudioClip;
-                            crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
+                            Debug.LogError($"Exception S02: {ex}");
                         }
                     }
                 }
@@ -312,13 +330,23 @@ public class GameSceneController : MonoBehaviour
         }
         else
         {
+            // TODO: when a sound effect is received, it will not clear the waiting background sound
             if (!receivedFirstHmCommand)
             {
-                if (crFadeIn != default)
-                    StopCoroutine(crFadeIn);
+                try
+                {
+                    if (crFadeIn != default)
+                        StopCoroutine(crFadeIn);
+                    if (crFadeOut != default)
+                        StopCoroutine(crFadeOut);
 
-                // this is to fade out the waiting background sound when the first command doesn't have an audio
-                crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+                    // this is to fade out the waiting background sound when the first command doesn't have an audio
+                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Exception S01: {ex}");
+                }
             }
         }
     }
