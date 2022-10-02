@@ -31,7 +31,6 @@ namespace Assets.Scripts
             // because the other sound was fading in, so the fadeout that was converted into fade in, will be suddenly 0 but
             // the other sound that was fading in but now fading out, is sounds ok, because you can't hardly notice the change
             audioSource.volume = 0;
-
             audioSource.Play();
             
             while (audioSource.volume < 1)

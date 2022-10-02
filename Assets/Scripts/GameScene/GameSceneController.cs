@@ -62,8 +62,8 @@ public class GameSceneController : MonoBehaviour
     IHtHubConnection hub;
 
     CurrentGameModel currentGameModel;
-    Dictionary<long, LoadedAudioAssetModel> allAudios;
-    readonly Dictionary<long, AudioSource> allSourceAudios = new();
+    public AudioSource sndEffect;
+    readonly Dictionary<long, AudioSource> allBgms = new();
     readonly List<AudioPlayingModel> fadeOutAudios = new();
     AudioPlayingModel currentBgm;
 
@@ -95,19 +95,17 @@ public class GameSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
 
-
         // Load audiosource (fix webgl bug)
-        allAudios = currentGameModel.GetAllAudios();
-        foreach (var audio in allAudios)
+        foreach (var audio in currentGameModel.GetAllAudios())
         {
-            var audioSource = gameObject.AddComponent<AudioSource>();
             if (audio.Value.Model.IsBgm)
             {
+                var audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.loop = true;
+                audioSource.clip = audio.Value.AudioClip;
+                audioSource.outputAudioMixerGroup = masterVolume;
+                allBgms.Add(audio.Key, audioSource);
             }
-            audioSource.clip = audio.Value.AudioClip;
-            audioSource.outputAudioMixerGroup = masterVolume;
-            allSourceAudios.Add(audio.Key, audioSource);
         }
 
         crFadeInWaiting = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
@@ -232,6 +230,7 @@ public class GameSceneController : MonoBehaviour
                 StopCoroutine(currentBgm.Coroutine);
                 fadeOutAudios.Add(new AudioPlayingModel()
                 {
+                    Id = currentBgm.Id,
                     AudioSource = currentBgm.AudioSource,
                     Coroutine = StartCoroutine(AudioHelper.FadeOut(currentBgm.AudioSource, Constants.AudioFadeOutTime))
                 });
@@ -244,13 +243,20 @@ public class GameSceneController : MonoBehaviour
         receivedFirstHmCommand = true;
     }
 
-    private void CleanFadeOuts()
+    private void CleanFadeOuts(long id = -1)
     {
         var index = 0;
         while (index < fadeOutAudios.Count)
         {
-            if (!fadeOutAudios[index].AudioSource.isPlaying)
+            if (id > -1 && fadeOutAudios[index].Id == id)
             {
+                Debug.Log("Removed audiosource clean up FORCED");
+                StopCoroutine(fadeOutAudios[index].Coroutine);
+                fadeOutAudios.RemoveAt(index);
+            }
+            else if (!fadeOutAudios[index].AudioSource.isPlaying)
+            {
+                Debug.Log("Removed audiosource clean up");
                 fadeOutAudios.RemoveAt(index);
             }
             else
@@ -300,12 +306,10 @@ public class GameSceneController : MonoBehaviour
                 var audio = currentGameModel.GetAudio(id);
                 if (audio != default)
                 {
-                    // this is an already loaded audio source
-                    var audioSource = allSourceAudios[id];
-
+                    
                     if (!audio.Model.IsBgm)
                     {
-                        audioSource.PlayOneShot(audioSource.clip);
+                        sndEffect.PlayOneShot(audio.AudioClip);
                         Debug.Log("Playing sound effect: " + audio.Model.Name);
                     }
                     else if (!gotBgm)
@@ -316,12 +320,20 @@ public class GameSceneController : MonoBehaviour
 
                         idAudioBgmPlaying = id;
 
-                        CleanFadeOuts();
+                        var audioSource = allBgms[id];
+                        // if the same id is playing (fadein or normal), this won't happen
+                        // see condition above
+                        if (audioSource.isPlaying)
+                            CleanFadeOuts(id);
+                        else
+                            CleanFadeOuts();
+
                         if (currentBgm != default)
                         {
                             StopCoroutine(currentBgm.Coroutine);
                             fadeOutAudios.Add(new AudioPlayingModel()
                             {
+                                Id = currentBgm.Id,
                                 AudioSource = currentBgm.AudioSource,
                                 Coroutine = StartCoroutine(AudioHelper.FadeOut(currentBgm.AudioSource, Constants.AudioFadeOutTime))
                             });
@@ -330,6 +342,7 @@ public class GameSceneController : MonoBehaviour
 
                         currentBgm = new AudioPlayingModel()
                         {
+                            Id = id,
                             AudioSource = audioSource,
                             Coroutine = StartCoroutine(AudioHelper.FadeIn(audioSource, Constants.AudioFadeOutTime))
                         };
@@ -485,10 +498,13 @@ public class GameSceneController : MonoBehaviour
 
     async void OnDestroy()
     {
-        foreach (var audioSources in allSourceAudios)
+        foreach (var audioSources in allBgms)
         {
+            audioSources.Value.Stop();
+            audioSources.Value.clip = null;
             Destroy(audioSources.Value);
         }
+
         if (hub != default)
         {
             hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;

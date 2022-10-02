@@ -9,6 +9,7 @@ namespace Assets.Scripts.Models
 {
     internal class AudioPlayingModel
     {
+        public long Id { get; set; }
         public AudioSource AudioSource { get; set; }
         public Coroutine Coroutine { get; set; }
     }
