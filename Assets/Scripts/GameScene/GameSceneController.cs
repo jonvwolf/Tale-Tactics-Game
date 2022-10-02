@@ -4,6 +4,8 @@ using Assets.Scripts.Models;
 using Assets.Scripts.ServerModels;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -15,15 +17,18 @@ public class GameSceneController : MonoBehaviour
     public CanvasGroup cgGameCanvas;
 
     public AudioSource sndWaiting;
-    
-    Coroutine crFadeIn;
-    Coroutine crFadeOut;
-    bool isBgm1Playing = true;
-    long idAudioBgmPlaying = 0;
+    Coroutine crFadeInWaiting;
 
     bool receivedFirstHmCommand;
 
+    /// <summary>
+    /// This is for the global settings audio
+    /// </summary>
     public AudioMixer audioMixer;
+    /// <summary>
+    /// This is for the dynamically created AudioSources
+    /// </summary>
+    public AudioMixerGroup masterVolume;
 
     public Canvas cnvWaiting;
     public Canvas cnvGame;
@@ -53,14 +58,16 @@ public class GameSceneController : MonoBehaviour
     public Button btnReconnect;
     public TMP_Text txtWaitingText;
 
-    public AudioSource soundEffects;
-
-    public AudioMixerGroup MasterVolume;
-
     GameCodeModel gameCodeModel;
     IHtHubConnection hub;
 
     CurrentGameModel currentGameModel;
+    Dictionary<long, LoadedAudioAssetModel> allAudios;
+    readonly Dictionary<long, AudioSource> allSourceAudios = new();
+    readonly List<AudioPlayingModel> fadeOutAudios = new();
+    AudioPlayingModel currentBgm;
+
+    long idAudioBgmPlaying = 0;
 
     // This is to not show an error when it first connects because with JS it will be notified with event
     bool isFirstConnectedJs = true;
@@ -88,7 +95,22 @@ public class GameSceneController : MonoBehaviour
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
 
-        crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
+
+        // Load audiosource (fix webgl bug)
+        allAudios = currentGameModel.GetAllAudios();
+        foreach (var audio in allAudios)
+        {
+            var audioSource = gameObject.AddComponent<AudioSource>();
+            if (audio.Value.Model.IsBgm)
+            {
+                audioSource.loop = true;
+            }
+            audioSource.clip = audio.Value.AudioClip;
+            audioSource.outputAudioMixerGroup = masterVolume;
+            allSourceAudios.Add(audio.Key, audioSource);
+        }
+
+        crFadeInWaiting = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
 
         btnCloseErrorCanvas.onClick.AddListener(() =>
         {
@@ -203,38 +225,39 @@ public class GameSceneController : MonoBehaviour
 
         if (e.StopBgm.HasValue && e.StopBgm.Value)
         {
-            try
+            CleanFadeOuts();
+            if (currentBgm != null)
             {
-                idAudioBgmPlaying = 0;
-                if (crFadeIn != default)
-                    StopCoroutine(crFadeIn);
-                if (crFadeOut != default)
-                    StopCoroutine(crFadeOut);
-
-                if (isBgm1Playing)
+                // Only 1 should be playing, so only 1 to stop (if others are playing, they should be fading out)
+                StopCoroutine(currentBgm.Coroutine);
+                fadeOutAudios.Add(new AudioPlayingModel()
                 {
-                    //if (sndBgm2.isPlaying)
-                        //sndBgm2.Stop();
-                    if (sndWaiting.isPlaying)
-                        crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
-                }
-                else
-                {
-                    if (sndWaiting.isPlaying)
-                        sndWaiting.Stop();
-                    //if (sndBgm2.isPlaying)
-                        //crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
-                }
-
+                    AudioSource = currentBgm.AudioSource,
+                    Coroutine = StartCoroutine(AudioHelper.FadeOut(currentBgm.AudioSource, Constants.AudioFadeOutTime))
+                });
+                currentBgm = null;
             }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Exception S03: {ex}");
-            }
+            idAudioBgmPlaying = 0;
         }
 
         // this has to be here
         receivedFirstHmCommand = true;
+    }
+
+    private void CleanFadeOuts()
+    {
+        var index = 0;
+        while (index < fadeOutAudios.Count)
+        {
+            if (!fadeOutAudios[index].AudioSource.isPlaying)
+            {
+                fadeOutAudios.RemoveAt(index);
+            }
+            else
+            {
+                index++;
+            }
+        }
     }
 
     private void FirstReceviedHmCommand()
@@ -247,6 +270,11 @@ public class GameSceneController : MonoBehaviour
             cnvGame.gameObject.SetActive(true);
             // panel image will be always active
             panelImage.SetActive(true);
+
+            // fadeout waiting sound
+            StopCoroutine(crFadeInWaiting);
+            StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
+            crFadeInWaiting = default;
         }
     }
 
@@ -272,80 +300,40 @@ public class GameSceneController : MonoBehaviour
                 var audio = currentGameModel.GetAudio(id);
                 if (audio != default)
                 {
+                    // this is an already loaded audio source
+                    var audioSource = allSourceAudios[id];
+
                     if (!audio.Model.IsBgm)
                     {
-                        // Fix webgl audio
-                        soundEffects.time = 0;
-                        soundEffects.PlayOneShot(audio.AudioClip);
+                        audioSource.PlayOneShot(audioSource.clip);
                         Debug.Log("Playing sound effect: " + audio.Model.Name);
                     }
                     else if (!gotBgm)
                     {
                         gotBgm = true;
-
                         if (idAudioBgmPlaying == id)
-                        {
                             continue;
-                        }
+
                         idAudioBgmPlaying = id;
 
-                        try
+                        CleanFadeOuts();
+                        if (currentBgm != default)
                         {
-                            if (isBgm1Playing)
+                            StopCoroutine(currentBgm.Coroutine);
+                            fadeOutAudios.Add(new AudioPlayingModel()
                             {
-                                isBgm1Playing = false;
-                                if (crFadeIn != default)
-                                    StopCoroutine(crFadeIn);
-                                if (crFadeOut != default)
-                                    StopCoroutine(crFadeOut);
-
-                                if (sndWaiting.isPlaying)
-                                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
-
-                                //sndBgm2.clip = audio.AudioClip;
-                                //crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndBgm2, Constants.AudioFadeInTime));
-                            }
-                            else
-                            {
-                                isBgm1Playing = true;
-                                if (crFadeIn != default)
-                                    StopCoroutine(crFadeIn);
-                                if (crFadeOut != default)
-                                    StopCoroutine(crFadeOut);
-
-                                //if (sndBgm2.isPlaying)
-                                    //crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndBgm2, Constants.AudioFadeOutTime));
-
-                                sndWaiting.clip = audio.AudioClip;
-                                crFadeIn = StartCoroutine(AudioHelper.FadeIn(sndWaiting, Constants.AudioFadeInTime));
-                            }
+                                AudioSource = currentBgm.AudioSource,
+                                Coroutine = StartCoroutine(AudioHelper.FadeOut(currentBgm.AudioSource, Constants.AudioFadeOutTime))
+                            });
+                            currentBgm = null;
                         }
-                        catch (Exception ex)
+
+                        currentBgm = new AudioPlayingModel()
                         {
-                            Debug.LogError($"Exception S02: {ex}");
-                        }
+                            AudioSource = audioSource,
+                            Coroutine = StartCoroutine(AudioHelper.FadeIn(audioSource, Constants.AudioFadeOutTime))
+                        };
                     }
-                }
-            }
-        }
-        else
-        {
-            // TODO: when a sound effect is received, it will not clear the waiting background sound
-            if (!receivedFirstHmCommand)
-            {
-                try
-                {
-                    if (crFadeIn != default)
-                        StopCoroutine(crFadeIn);
-                    if (crFadeOut != default)
-                        StopCoroutine(crFadeOut);
-
-                    // this is to fade out the waiting background sound when the first command doesn't have an audio
-                    crFadeOut = StartCoroutine(AudioHelper.FadeOut(sndWaiting, Constants.AudioFadeOutTime));
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Exception S01: {ex}");
                 }
             }
         }
@@ -497,6 +485,10 @@ public class GameSceneController : MonoBehaviour
 
     async void OnDestroy()
     {
+        foreach (var audioSources in allSourceAudios)
+        {
+            Destroy(audioSources.Value);
+        }
         if (hub != default)
         {
             hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;

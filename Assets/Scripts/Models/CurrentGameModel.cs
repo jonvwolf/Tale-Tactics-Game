@@ -49,6 +49,11 @@ namespace Assets.Scripts.Models
             return default;
         }
 
+        public Dictionary<long, LoadedAudioAssetModel> GetAllAudios()
+        {
+            return new Dictionary<long, LoadedAudioAssetModel>(_audios);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
