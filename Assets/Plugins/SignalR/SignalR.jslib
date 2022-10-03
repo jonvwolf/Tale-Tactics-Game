@@ -8,6 +8,11 @@ mergeInto(LibraryManager.library, {
     return x + y;
   },
   
+  GetCodeJs: function() {
+	console.log('Called GetCodeJs');
+	window.HtGetCode();
+  },
+  
   ConnectJs: function(gameCode, url) {
 	console.log('Called ConnectJs');
 	window.HtConnect(UTF8ToString(gameCode), UTF8ToString(url));

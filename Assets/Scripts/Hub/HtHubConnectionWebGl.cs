@@ -80,7 +80,7 @@ namespace Assets.Scripts.Hub
             }
         }
 
-        static T CheckJsLinkData<T>(string data) where T : class
+        public static T CheckJsLinkData<T>(string data) where T : class
         {
             try
             {

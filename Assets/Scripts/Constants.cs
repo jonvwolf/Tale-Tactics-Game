@@ -8,7 +8,7 @@ namespace Assets.Scripts
 {
     public static class Constants
     {
-        public readonly static bool IsDebug = true;
+        public readonly static bool IsDebug = false;
         public readonly static string LoadingSceneName = "LoadingScene";
         public readonly static string MainSceneName = "MainScene";
         public readonly static string GameSceneName = "GameScene";

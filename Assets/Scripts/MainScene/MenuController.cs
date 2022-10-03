@@ -24,9 +24,14 @@ public class MenuController : MonoBehaviour
     public Button btnGoCredits;
     public Button btnExit;
 
+    IJsCodeHelper jsCodeHelper;
+
     // Start is called before the first frame update
     void Start()
     {
+        //TODO: remove this
+        txtGameCode.text = "4d30a";
+
         if (Constants.IsDebug)
         {
             txtGameCode.text = "a5ab0";
@@ -52,10 +57,21 @@ public class MenuController : MonoBehaviour
         Global.ApplyUserSettings(settings);
 
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
+
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
+        jsCodeHelper = new JsCodeHelperMono();
+#elif UNITY_WEBGL
+        jsCodeHelper = new JsCodeHelper((str) =>
+        {
+            txtGameCode.text = str.Trim();
+        });
+#endif
     }
 
     void OnDestroy()
     {
+        jsCodeHelper.Dispose();
+
         Global.OnUserSettingsChanged -= OnUserSettingsChanged;
         Debug.Log("MenuController:OnDestroy");
     }
@@ -73,7 +89,11 @@ public class MenuController : MonoBehaviour
 
     public void BtnExit_Click()
     {
-        Application.Quit();
+        //TODO: Application.Quit();
+
+        // This will call the js function then through JsCodeHelper `Action` it will be return the code
+        // . and be set to txtGameCode
+        jsCodeHelper.GetCode();
     }
     public void EnterGame_Click()
     {
