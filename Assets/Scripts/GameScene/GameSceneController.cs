@@ -51,6 +51,8 @@ public class GameSceneController : MonoBehaviour
     /// This is the text to show from incoming HmCommand
     /// </summary>
     public TMP_Text txtText;
+    public Image biggerTextBg;
+    public Image NormalTextBg;
 
     public Canvas cnvError;
     public TMP_Text txtError;
@@ -549,9 +551,17 @@ public class GameSceneController : MonoBehaviour
             return;
 
         if (settings.BiggerGameText == Constants.BiggerGameTextValue)
+        {
             txtText.fontSize = Constants.BigGameTextSize;
+            biggerTextBg.gameObject.SetActive(true);
+            NormalTextBg.gameObject.SetActive(false);
+        }
         else
+        {
             txtText.fontSize = Constants.NormalGameTextSize;
+            biggerTextBg.gameObject.SetActive(false);
+            NormalTextBg.gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
