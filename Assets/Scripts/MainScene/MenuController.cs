@@ -33,12 +33,9 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //TODO: remove this
-        txtGameCode.text = "4d30a";
-
         if (Constants.IsDebug)
         {
-            txtGameCode.text = "a5ab0";
+            txtGameCode.text = "4d30a";
         }
 
         Global.CurrentScene = Constants.MainSceneName;
