@@ -446,6 +446,15 @@ public class GameSceneController : MonoBehaviour
     }
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
     {
+        if (e.IsReconnecting || e.Reconnected)
+        {
+            var ex2 = string.Empty;
+            if (e.Exception != default)
+                ex2 = $"({e.Exception.Message})";
+            Debug.Log("IsReconnecting or Reconnected. Exception: " + ex2);
+            return;
+        }
+
         string ex = string.Empty;
 
         if (isFirstConnectedJs && e.ConnectedByJs)
@@ -463,6 +472,7 @@ public class GameSceneController : MonoBehaviour
         
         if (e.IsReconnecting)
         {
+            // TODO: check above if
             txtError.text = "Lost connection to hub. Reconnecting..." + ex;
         }
         else if (e.Disconnected)
@@ -473,6 +483,7 @@ public class GameSceneController : MonoBehaviour
         }
         else if (e.Reconnected)
         {
+            // TODO: check above if
             txtError.text = "Connection restored, you may now close this message. " + ex;
         }
         else if (e.InvokeFailed)
