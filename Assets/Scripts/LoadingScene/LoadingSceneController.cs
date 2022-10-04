@@ -32,7 +32,7 @@ public class LoadingSceneController : MonoBehaviour
     bool quit = false;
 
     bool errorHappened;
-
+    bool canExitBecauseError;
     // Start is called before the first frame update
     void Start()
     {
@@ -127,6 +127,11 @@ public class LoadingSceneController : MonoBehaviour
     void OnExitGame(object sender, EventArgs args)
     {
         quit = true;
+        if (canExitBecauseError)
+        {
+            // send signal it is okay
+            Global.OkExitGame();
+        }
     }
 
     void OnUserSettingsChanged(object sender, UserSettingsEventArgs args)
@@ -145,11 +150,12 @@ public class LoadingSceneController : MonoBehaviour
         btnRetry.enabled = false;
         btnRetry.gameObject.SetActive(false);
 
+        canExitBecauseError = false;
         errorHappened = false;
         TotalAssets = model.ReadGameConfigurationModel.Images.Count + model.ReadGameConfigurationModel.Audios.Count + model.ReadGameConfigurationModel.Minigames.Count;
         LoadedAssets = 0;
 
-        foreach(var item in model.ReadGameConfigurationModel.Images)
+        foreach (var item in model.ReadGameConfigurationModel.Images)
         {
             if (quit)
             {
@@ -212,6 +218,7 @@ public class LoadingSceneController : MonoBehaviour
 
     IEnumerator LoadAsset(ReadImageModel image, ReadAudioModel audio)
     {
+        var requestSuccess = false;
         string url;
         LoadingAssetText.text = $"Loading asset {LoadedAssets} out of {TotalAssets}...";
 
@@ -282,6 +289,7 @@ public class LoadingSceneController : MonoBehaviour
                     }
 
                     LoadedAssets++;
+                    requestSuccess = true;
                 }
                 catch (Exception e)
                 {
@@ -309,6 +317,18 @@ public class LoadingSceneController : MonoBehaviour
         }
         finally
         {
+            // This only happens when this throws an exception
+            // Because in all scenarios, if something is wrong (no exception)
+            // errorHappened will be true
+            if (!requestSuccess && !errorHappened)
+            {
+                // TODO: can't know the exception and outer try/finally doesn't work. NICE UNITY
+                ErrorText.text = $"There was an error trying to load an asset, try again or exit the game and join again";
+                btnRetry.enabled = true;
+                btnRetry.gameObject.SetActive(true);
+                errorHappened = true;
+                canExitBecauseError = true;
+            }
             if (www != default)
                 www.Dispose();
         }
