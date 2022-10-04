@@ -70,10 +70,15 @@ namespace Assets.Scripts
             if (vsync == int.MinValue)
                 vsync = Constants.VSyncEnabledValue;
 
+            var biggerText = PlayerPrefs.GetInt(Constants.BiggerTextSettingKey, int.MinValue);
+            if (biggerText == int.MinValue)
+                biggerText = Constants.NotBiggerGameTextValue;
+
             return new UserSettingsEventArgs()
             {
                 Volume = volume,
-                VSync = vsync
+                VSync = vsync,
+                BiggerGameText = biggerText
             };
         }
 

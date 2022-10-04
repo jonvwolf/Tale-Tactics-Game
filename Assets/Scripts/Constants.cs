@@ -16,10 +16,16 @@ namespace Assets.Scripts
         public readonly static float WaitForSecondsAfterEachLoadAsset = 0.450f;
 
         public const string VSyncSettingKey = "vsync";
+        public const string BiggerTextSettingKey = "biggertext";
         public const string VolumeSettingKey = "volume";
         public const string MixerMasterVolumeKey = "mastervol";
         public const int VSyncEnabledValue = 1;
+        public const int BiggerGameTextValue = 1;
+        public const int NotBiggerGameTextValue = 0;
         public const float DefaultVolume = 5f;
+
+        public const int NormalGameTextSize = 18;
+        public const int BigGameTextSize = 26;
 
         readonly static string BaseUrl = "https://ht-api.whostreaming.net";
         //readonly static string BaseUrl = "https://localhost:7216";

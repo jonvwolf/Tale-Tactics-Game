@@ -91,6 +91,7 @@ public class GameSceneController : MonoBehaviour
 
         var settings = Global.GetCurrentUserSettings();
         Global.ApplyUserSettings(settings);
+        UpdateGameTextFontSize(settings);
 
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
         Global.OnExitGame += OnExitGame;
@@ -539,7 +540,20 @@ public class GameSceneController : MonoBehaviour
     void OnUserSettingsChanged(object sender, UserSettingsEventArgs args)
     {
         Global.ApplyUserSettings(args, audioMixer);
+        UpdateGameTextFontSize(args);
     }
+
+    void UpdateGameTextFontSize(UserSettingsEventArgs settings)
+    {
+        if (!settings.BiggerGameText.HasValue)
+            return;
+
+        if (settings.BiggerGameText == Constants.BiggerGameTextValue)
+            txtText.fontSize = Constants.BigGameTextSize;
+        else
+            txtText.fontSize = Constants.NormalGameTextSize;
+    }
+
     // Update is called once per frame
     async void Update()
     {

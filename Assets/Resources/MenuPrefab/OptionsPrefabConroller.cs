@@ -14,6 +14,7 @@ public class OptionsPrefabConroller : MonoBehaviour
     public TMP_Text txtCurrentCache;
     public Button btnExitGame;
     public Toggle tglVsync;
+    public Toggle tglBiggerText;
     public Slider sldVolume;
 
     public Image imgExiting;
@@ -55,9 +56,15 @@ public class OptionsPrefabConroller : MonoBehaviour
         else
             tglVsync.isOn = false;
 
+        if (settings.BiggerGameText == Constants.BiggerGameTextValue)
+            tglBiggerText.isOn = true;
+        else
+            tglBiggerText.isOn = false;
+
         sldVolume.value = settings.Volume.Value;
 
         tglVsync.onValueChanged.AddListener(TglVsync_ValueChanged);
+        tglBiggerText.onValueChanged.AddListener(TglBiggerText_ValueChanged);
         sldVolume.onValueChanged.AddListener(SldVolume_ValueChanged);
 
         Global.OnOkExitGame += OnOkExitGame;
@@ -92,6 +99,17 @@ public class OptionsPrefabConroller : MonoBehaviour
         Global.UserSettingsChanged(new Assets.Scripts.Models.UserSettingsEventArgs()
         {
             VSync = val
+        });
+    }
+
+    void TglBiggerText_ValueChanged(bool value)
+    {
+        int val = Convert.ToInt32(value);
+        PlayerPrefs.SetInt(Constants.BiggerTextSettingKey, val);
+
+        Global.UserSettingsChanged(new Assets.Scripts.Models.UserSettingsEventArgs()
+        {
+            BiggerGameText = val
         });
     }
 

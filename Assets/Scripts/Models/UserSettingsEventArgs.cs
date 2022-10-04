@@ -10,5 +10,6 @@ namespace Assets.Scripts.Models
     {
         public int? VSync { get; set; }
         public float? Volume { get; set; }
+        public int? BiggerGameText { get; set; }
     }
 }
