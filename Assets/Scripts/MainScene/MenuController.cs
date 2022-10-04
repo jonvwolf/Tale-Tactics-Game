@@ -17,10 +17,13 @@ public class MenuController : MonoBehaviour
     public Button btnStartGame;
     public TMP_InputField txtGameCode;
     public TMP_Text txtError;
+    public TMP_Text txtMobileNotice;
 
     public Canvas mainCanvas;
     public Canvas creditsCanvas;
+    public Canvas instructionsCanvas;
     public Button btnGoBackMain;
+    public Button btnGoBackMainFromInstructions;
     public Button btnGoCredits;
     public Button btnInstructions;
     public Button btnExit;
@@ -41,6 +44,8 @@ public class MenuController : MonoBehaviour
         Global.CurrentScene = Constants.MainSceneName;
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);
+        instructionsCanvas.enabled = false;
+        instructionsCanvas.gameObject.SetActive(false);
 
         var model = Global.GetGameConfiguration();
         if (model != default)
@@ -52,6 +57,7 @@ public class MenuController : MonoBehaviour
         btnStartGame.onClick.AddListener(EnterGame_Click);
         btnGoCredits.onClick.AddListener(GoCredits_Click);
         btnGoBackMain.onClick.AddListener(GoBackMain_Click);
+        btnGoBackMainFromInstructions.onClick.AddListener(GoBackMainFromInstructions_Click);
         btnInstructions.onClick.AddListener(BtnInstructions_Click);
 
         var settings = Global.GetCurrentUserSettings();
@@ -63,6 +69,9 @@ public class MenuController : MonoBehaviour
         jsCodeHelper = new JsCodeHelperMono();
 
         btnExit.onClick.AddListener(BtnExit_Click);
+
+        txtMobileNotice.enabled = false;
+        txtMobileNotice.gameObject.SetActive(false);
 #elif UNITY_WEBGL
         btnExit.enabled = false;
         btnExit.gameObject.SetActive(false);
@@ -99,7 +108,8 @@ public class MenuController : MonoBehaviour
 
     public void BtnInstructions_Click()
     {
-        
+        instructionsCanvas.enabled = true;
+        instructionsCanvas.gameObject.SetActive(true);
     }
 
     public void BtnExit_Click()
@@ -125,6 +135,12 @@ public class MenuController : MonoBehaviour
         Debug.Log("Credits: Go back main");
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);
+    }
+    public void GoBackMainFromInstructions_Click()
+    {
+        Debug.Log("Instructions: Go back main");
+        instructionsCanvas.enabled = false;
+        instructionsCanvas.gameObject.SetActive(false);
     }
     IEnumerator GetStoryModel(string gameCode)
     {
