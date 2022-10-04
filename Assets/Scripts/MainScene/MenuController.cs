@@ -22,6 +22,7 @@ public class MenuController : MonoBehaviour
     public Canvas creditsCanvas;
     public Button btnGoBackMain;
     public Button btnGoCredits;
+    public Button btnInstructions;
     public Button btnExit;
 
     IJsCodeHelper jsCodeHelper;
@@ -51,7 +52,7 @@ public class MenuController : MonoBehaviour
         btnStartGame.onClick.AddListener(EnterGame_Click);
         btnGoCredits.onClick.AddListener(GoCredits_Click);
         btnGoBackMain.onClick.AddListener(GoBackMain_Click);
-        btnExit.onClick.AddListener(BtnExit_Click);
+        btnInstructions.onClick.AddListener(BtnInstructions_Click);
 
         var settings = Global.GetCurrentUserSettings();
         Global.ApplyUserSettings(settings);
@@ -60,11 +61,20 @@ public class MenuController : MonoBehaviour
 
 #if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
         jsCodeHelper = new JsCodeHelperMono();
+
+        btnExit.onClick.AddListener(BtnExit_Click);
 #elif UNITY_WEBGL
+        btnExit.enabled = false;
+        btnExit.gameObject.SetActive(false);
+
         jsCodeHelper = new JsCodeHelper((str) =>
         {
             txtGameCode.text = str.Trim();
         });
+
+        // This will call the js function then through JsCodeHelper `Action` it will be return the code
+        // . and be set to txtGameCode
+        jsCodeHelper.GetCode();
 #endif
     }
 
@@ -87,18 +97,20 @@ public class MenuController : MonoBehaviour
         
     }
 
+    public void BtnInstructions_Click()
+    {
+        
+    }
+
     public void BtnExit_Click()
     {
-        //TODO: Application.Quit();
-
-        // This will call the js function then through JsCodeHelper `Action` it will be return the code
-        // . and be set to txtGameCode
-        jsCodeHelper.GetCode();
+        Application.Quit();
     }
+
     public void EnterGame_Click()
     {
         btnStartGame.interactable = false;
-        btnExit.interactable = false;
+        btnInstructions.interactable = false;
         StartCoroutine(GetStoryModel(txtGameCode.text.Trim()));
     }
 
@@ -182,6 +194,6 @@ public class MenuController : MonoBehaviour
         }
 
         btnStartGame.interactable = true;
-        btnExit.interactable = true;
+        btnInstructions.interactable = true;
     }
 }
