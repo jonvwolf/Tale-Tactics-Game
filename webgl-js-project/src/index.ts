@@ -1,6 +1,7 @@
 /*
 	Add this bundle.js to index.html (unity index.html)
-		-> <script src="bundle.js"></script>
+		-> <script src="bundle.js?id=001"></script>
+    ** Don't forget to increase the id
 	To get unity reference in index.html
 		-> .then((unityInstance) => { window.HtUnityInstance = unityInstance;
 */
