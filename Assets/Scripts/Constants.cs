@@ -22,7 +22,8 @@ namespace Assets.Scripts
         public const int VSyncEnabledValue = 1;
         public const int BiggerGameTextValue = 1;
         public const int NotBiggerGameTextValue = 0;
-        public const float DefaultVolume = 5f;
+        public const float DefaultVolume = 0.35f;
+        public const float MaxVolume = 1f;
 
         public const int NormalGameTextSize = 18;
         public const int BigGameTextSize = 26;

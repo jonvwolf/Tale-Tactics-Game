@@ -92,7 +92,7 @@ public class GameSceneController : MonoBehaviour
         gameCodeModel = new GameCodeModel(currentGameModel.GameCode);
 
         var settings = Global.GetCurrentUserSettings();
-        Global.ApplyUserSettings(settings);
+        Global.ApplyUserSettings(settings, audioMixer);
         UpdateGameTextFontSize(settings);
 
         Global.OnUserSettingsChanged += OnUserSettingsChanged;

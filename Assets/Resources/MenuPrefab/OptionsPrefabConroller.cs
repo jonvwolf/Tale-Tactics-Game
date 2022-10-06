@@ -62,6 +62,7 @@ public class OptionsPrefabConroller : MonoBehaviour
             tglBiggerText.isOn = false;
 
         sldVolume.value = settings.Volume.Value;
+        sldVolume.maxValue = Constants.MaxVolume;
 
         tglVsync.onValueChanged.AddListener(TglVsync_ValueChanged);
         tglBiggerText.onValueChanged.AddListener(TglBiggerText_ValueChanged);

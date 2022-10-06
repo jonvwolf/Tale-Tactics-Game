@@ -93,7 +93,10 @@ namespace Assets.Scripts
 
             // TODO: Not sure if everysingle Start of scene, I have to do this...
             if (args.Volume.HasValue && mixer != default)
+            {
+                Debug.Log("Volume from UI: " + args.Volume.Value + " Mathf: " + Mathf.Log10(args.Volume.Value * 20));
                 mixer.SetFloat(Constants.MixerMasterVolumeKey, Mathf.Log10(args.Volume.Value) * 20);
+            }
         }
 
         public static CurrentGameConfigurationModel GetGameConfiguration()

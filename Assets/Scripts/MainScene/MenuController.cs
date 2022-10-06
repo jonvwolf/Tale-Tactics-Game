@@ -81,6 +81,9 @@ public class MenuController : MonoBehaviour
         // This will call the js function then through JsCodeHelper `Action` it will be return the code
         // . and be set to txtGameCode
         jsCodeHelper.GetCode();
+#else
+        Debug.LogError("What is this?");
+        jsCodeHelper = new JsCodeHelperMono();
 #endif
     }
 
