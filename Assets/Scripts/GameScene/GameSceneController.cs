@@ -572,11 +572,13 @@ public class GameSceneController : MonoBehaviour
             if (!alreadySentQuit)
             {
                 alreadySentQuit = true;
-                await hub.PlayerSendLog(new TextLogModel()
-                {
-                    From = "A player",
-                    Message = "Has left the game"
-                });
+                
+                // TODO: if hub is not connected, do not send
+                //await hub.PlayerSendLog(new TextLogModel()
+                //{
+                //    From = "A player",
+                //    Message = "Has left the game"
+                //});
                 hub.OnConnectionStatusChanged -= Hub_OnConnectionStatusChanged;
                 hub.OnHmCommand -= Hub_OnHmCommand;
                 hub.OnHmPredefinedCommand -= Hub_OnHmPredefinedCommand;
