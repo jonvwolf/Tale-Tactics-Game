@@ -158,8 +158,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000030518, y: 116.96}
-  m_SizeDelta: {x: 800, y: 215.85}
+  m_AnchoredPosition: {x: 0.018173, y: 116.96}
+  m_SizeDelta: {x: 1266.7, y: 215.85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &153967555
 MonoBehaviour:
@@ -234,8 +234,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000053406, y: -0.0000019073}
-  m_SizeDelta: {x: 800, y: 450}
+  m_AnchoredPosition: {x: 1.9298, y: 4.065}
+  m_SizeDelta: {x: 762.6924, y: 398.13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &184060394
 MonoBehaviour:
@@ -260,47 +260,30 @@ MonoBehaviour:
   m_text: 'Known issues
 
 
-    All platforms:
+    WebGL (browser):
 
-    Volume setting may not work properly
-    in some systems.
-
-
-    WebGL (web player & mobile):
-
-    1. Unity does not officially
-    support it but fortunately, it works for the most part, see below in how to input
-    a game code.
+    Issue #1: Unity does not officially
+    support browsers but fortunately, it works for the most part, see below in how
+    to input a game code.
 
 
-    When you tap the code input field on mobile, the keyboard
-    does not show up. In other to circumvent this problem, you need to add this query
-    parameter to the Url.
+    When you tap the code input field on mobile, the
+    keyboard does not show up. In other to circumvent this problem, you need to add
+    this query parameter to the Url.
 
-    For example, if the code is "a4hf8", add it to the
-    Url like this: https://whostreaming.net/ht-unity?code=a4hf8
-
-    And the code
-    will be automatically set.
+    For example, if the code is "a4hf8", append
+    it like this: "?code=a4hf8"
 
 
-    2. You have to repeatedly tap the phone screen
-    so it doesn''t block the screen.
-
-    3. Fullscreen may not work in some phones.
-
-    4.
-    Asset loading may not work in some phones.
+    And the code will be automatically set when
+    page loads.
 
 
-    Sorry for the inconvienience!
-
-    If
-    you encounter a bug, feel free to contact me @jonwolfdev or jonwolfdev@gmail.com
+    Issue #2: You have to repeatedly tap the phone screen so it
+    doesn''t block the screen.
 
 
-    Thank
-    you '
+    Sorry for the inconvienience'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -410,7 +393,7 @@ RectTransform:
   m_Children:
   - {fileID: 799084264}
   m_Father: {fileID: 1102643210}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -536,7 +519,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 319.99997, y: -209.99997}
+  m_AnchoredPosition: {x: 283.98, y: -180}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &352295527
@@ -652,7 +635,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1102643210}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1161,8 +1144,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000053406, y: -25}
-  m_SizeDelta: {x: 800, y: 400}
+  m_AnchoredPosition: {x: -18.01048, y: -25}
+  m_SizeDelta: {x: 763.9789, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &626424567
 MonoBehaviour:
@@ -1184,7 +1167,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Horror Tactics made by Jonathan <jonwolfdev@gmail.com>
+  m_text: 'Tale Tactics made by jonwolfdev studios (@jonwolfdev)
 
 
     Assets:
@@ -1268,7 +1251,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 25.729462, y: 0, z: 0, w: 29.588806}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1452,8 +1435,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.0009813309}
-  m_SizeDelta: {x: 800, y: 499.9}
+  m_AnchoredPosition: {x: -0.0050049, y: -0.000045776}
+  m_SizeDelta: {x: 800.01, y: 449.78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &690854276
 MonoBehaviour:
@@ -1681,7 +1664,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2434,7 +2417,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2481,7 +2464,6 @@ RectTransform:
   - {fileID: 852660590}
   - {fileID: 856815744}
   - {fileID: 1179836319}
-  - {fileID: 1660844744}
   - {fileID: 288995921}
   - {fileID: 415416648}
   m_Father: {fileID: 0}
@@ -2527,7 +2509,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 262.1235, y: -74.506226}
+  m_AnchoredPosition: {x: 262.12, y: -72.506}
   m_SizeDelta: {x: 275.7531, y: 145.0124}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1179836320
@@ -2550,15 +2532,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Alpha release v1.0
+  m_text: 'Beta release v1.0
 
 
     If you experience a bug or have a suggestion,
-    contact me at jonwolfdev@gmail.com / @jonwolfdev
+    contact us at webmaster@taletactics.com or tweet us at @taletactics
 
 
-    Your feedback is greatly
-    appreciated!'
+    Your
+    feedback is greatly appreciated!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2828,7 +2810,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 319.99997, y: -209.99997}
+  m_AnchoredPosition: {x: 303.28, y: -180}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1243003759
@@ -3271,7 +3253,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -3443,141 +3425,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000021617, y: -197.87}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1660844743
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1660844744}
-  - component: {fileID: 1660844746}
-  - component: {fileID: 1660844745}
-  m_Layer: 5
-  m_Name: options indicator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1660844744
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1660844743}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1102643210}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.52125007, y: 0}
-  m_AnchorMax: {x: 0.52125007, y: 0}
-  m_AnchoredPosition: {x: 245.12, y: 31.948}
-  m_SizeDelta: {x: 275.76, y: 63.897}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1660844745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1660844743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: 'Click for options > . . '
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 1
-  m_HorizontalAlignment: 4
-  m_VerticalAlignment: 1024
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 1
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0.00006105204, w: 0.5817828}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1660844746
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1660844743}
-  m_CullTransparentMesh: 1
 --- !u!1 &1775761108
 GameObject:
   m_ObjectHideFlags: 0

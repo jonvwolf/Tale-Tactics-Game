@@ -144,6 +144,9 @@ public class GameSceneController : MonoBehaviour
         hub = new HtHubConnectionMono(gameCodeModel);
 #elif UNITY_WEBGL
         hub = new HtHubConnectionWebGl(gameCodeModel);
+#elif UNITY_ANDROID
+        // NOT USED Android support Mono
+        hub = new HtHubConnectionJava(gameCodeModel);
 #endif
         hub.OnConnectionStatusChanged += Hub_OnConnectionStatusChanged;
         hub.OnHmCommand += Hub_OnHmCommand;

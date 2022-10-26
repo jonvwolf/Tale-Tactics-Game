@@ -62,13 +62,18 @@ public class MenuController : MonoBehaviour
 
         Global.OnUserSettingsChanged += OnUserSettingsChanged;
 
-#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO || UNITY_ANDROID
         jsCodeHelper = new JsCodeHelperMono();
 
         btnExit.onClick.AddListener(BtnExit_Click);
 
+#if UNITY_ANDROID
+        btnExit.enabled = false;
+        btnExit.gameObject.SetActive(false);
+#else
         txtMobileNotice.enabled = false;
         txtMobileNotice.gameObject.SetActive(false);
+#endif
 #elif UNITY_WEBGL
         btnExit.enabled = false;
         btnExit.gameObject.SetActive(false);

@@ -14,8 +14,8 @@ public class OpenSettingsBtnController : MonoBehaviour
         {
             throw new System.Exception("prefabCanvas1 is not null");
         }
-        // TODO: I don't really know why this works...
-        // TODO: does this generate memory leaks?
+        
+        // OnDestroy is called and the game object is disposed
         prefabCanvas1 = (GameObject)Instantiate(Resources.Load("MenuPrefab/OptionsPrefab", typeof(GameObject)));
         prefabCanvas1.SetActive(false);
 
@@ -33,7 +33,9 @@ public class OpenSettingsBtnController : MonoBehaviour
 
     private void OnDestroy()
     {
+        // This is called so no memory leaks
         btnSelfReference.onClick.RemoveAllListeners();
         Destroy(prefabCanvas1);
+        Debug.Log("On destroy OpenSettingsBtn");
     }
 }

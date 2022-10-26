@@ -10,7 +10,10 @@ public class JsLinkController : MonoBehaviour
     /// For this to work, create a gameobject (empty 2d) in the scene named `JsLink`
     /// Then attach this monobehaviour to the game object, thats it
     /// (In your outside js get the unity game reference and call it example: 
-    /// `_window.HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', 'type test', 'hi from js');`
+    /// `_window.HtUnityInstance.SendMessage('JsLink', 'InvokeEvent', 'hi from js');`
+    /// 
+    /// For java:
+    /// (com.unity3d.player.UnityPlayer) UnityPlayer.UnitySendMessage("JsLink", "InvokeEvent", "hi from js");
     /// </summary>
     /// <param name="type"></param>
     /// <param name="data"></param>
