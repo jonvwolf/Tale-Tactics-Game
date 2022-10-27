@@ -28,7 +28,7 @@ namespace Assets.Scripts
         public const int NormalGameTextSize = 18;
         public const int BigGameTextSize = 26;
 
-        readonly static string BaseUrl = "https://ht-api.whostreaming.net";
+        readonly static string BaseUrl = "https://api.taletactics.com";
         //readonly static string BaseUrl = "https://localhost:7216";
 
         public readonly static string HubUrl = $"{BaseUrl}/game-hub";
