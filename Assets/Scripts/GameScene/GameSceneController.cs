@@ -79,6 +79,7 @@ public class GameSceneController : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Global.CurrentScene = Constants.GameSceneName;
 
         var gameModel = Global.GetGameConfiguration();
@@ -452,12 +453,18 @@ public class GameSceneController : MonoBehaviour
     }
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
     {
+        // Debug.Log(e.ToString());
         if (e.IsReconnecting || e.Reconnected)
         {
             var ex2 = string.Empty;
             if (e.Exception != default)
                 ex2 = $"({e.Exception.Message})";
-            Debug.Log("IsReconnecting or Reconnected. Exception: " + ex2);
+
+            if(e.IsReconnecting)
+                Debug.Log("IsReconnecting. Exception: " + ex2);
+            else
+                Debug.Log("Reconnected. Exception: " + ex2);
+
             return;
         }
 

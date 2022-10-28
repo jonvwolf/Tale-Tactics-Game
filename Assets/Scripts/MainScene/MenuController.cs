@@ -38,6 +38,8 @@ public class MenuController : MonoBehaviour
             txtGameCode.text = "4d30a";
         }
 
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
+
         Global.CurrentScene = Constants.MainSceneName;
         creditsCanvas.enabled = false;
         creditsCanvas.gameObject.SetActive(false);

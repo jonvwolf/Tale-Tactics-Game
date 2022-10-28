@@ -49,7 +49,7 @@ namespace Assets.Scripts.Hub
                     {
                         options.SkipNegotiation = true;
                     })
-                    .WithAutomaticReconnect()
+                    .WithAutomaticReconnect(new TimeSpan[] { TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(15) })
                     .Build();
 
                 await hub.StartAsync(cancellationTokenSource.Token);

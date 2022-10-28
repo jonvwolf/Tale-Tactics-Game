@@ -36,6 +36,8 @@ public class LoadingSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         Global.CurrentScene = Constants.LoadingSceneName;
         btnRetry.enabled = false;
         btnRetry.gameObject.SetActive(false);

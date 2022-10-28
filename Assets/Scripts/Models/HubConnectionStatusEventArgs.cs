@@ -17,5 +17,12 @@ namespace Assets.Scripts.Models
         public bool ConnectedByJs { get; set; }
         [JsonIgnore]
         public Exception Exception { get; set; }
+
+        public override string ToString()
+        {
+            return $"Reconnected: {Reconnected} IsReconnecting: {IsReconnecting} Disconnected: {Disconnected}" +
+                $"FailedToConnect: {FailedToConnect} InvokedFailed: {InvokeFailed} ConnectedByJs: {ConnectedByJs}" + 
+                $"Exception: {Exception?.ToString()}";
+        }
     }
 }
