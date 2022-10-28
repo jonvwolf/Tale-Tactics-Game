@@ -453,17 +453,18 @@ public class GameSceneController : MonoBehaviour
     }
     private void Hub_OnConnectionStatusChanged(object sender, HubConnectionStatusEventArgs e)
     {
-        // Debug.Log(e.ToString());
         if (e.IsReconnecting || e.Reconnected)
         {
             var ex2 = string.Empty;
             if (e.Exception != default)
                 ex2 = $"({e.Exception.Message})";
 
-            if(e.IsReconnecting)
+            if (e.IsReconnecting)
                 Debug.Log("IsReconnecting. Exception: " + ex2);
             else
-                Debug.Log("Reconnected. Exception: " + ex2);
+            {
+                Debug.Log("Reconnected.");
+            }
 
             return;
         }

@@ -49,26 +49,42 @@ namespace Assets.Scripts.Hub
                     {
                         options.SkipNegotiation = true;
                     })
-                    .WithAutomaticReconnect(new TimeSpan[] { TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(15) })
+                    .WithAutomaticReconnect()
                     .Build();
 
                 await hub.StartAsync(cancellationTokenSource.Token);
-
+                
                 hub.Closed += Hub_Closed;
                 hub.Reconnected += Hub_Reconnected;
                 hub.Reconnecting += Hub_Reconnecting;
 
                 playerReceiveHmCommandHandler = hub.On("PlayerReceiveHmCommand", (Func<HmCommandModel, Task>)((model) =>
                 {
-                    var ev = OnHmCommand;
-                    ev?.Invoke(null, model);
+                    try
+                    {
+                        var ev = OnHmCommand;
+                        ev?.Invoke(null, model);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                    
                     return PlayerSendBackHmCommandAsync(model);
                 }));
 
                 playerReceiveHmCommandPredefinedHandler = hub.On("PlayerReceiveHmCommandPredefined", (Func<HmCommandPredefinedModel, Task>)((model) =>
                 {
-                    var ev = OnHmPredefinedCommand;
-                    ev?.Invoke(null, model);
+                    try
+                    {
+                        var ev = OnHmPredefinedCommand;
+                        ev?.Invoke(null, model);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                    
                     return PlayerSendBackHmCommandPredefined(model);
                 }));
             }
@@ -133,8 +149,6 @@ namespace Assets.Scripts.Hub
 
         private Task Hub_Reconnecting(Exception arg)
         {
-            Debug.LogError("(Reconnecting) Hub exception: " + (arg?.ToString() ?? "<null>"));
-
             ConnectionStatusChanged(new HubConnectionStatusEventArgs()
             {
                 IsReconnecting = true,
@@ -143,14 +157,32 @@ namespace Assets.Scripts.Hub
             return Task.CompletedTask;
         }
 
-        private Task Hub_Reconnected(string arg)
+        private async Task Hub_Reconnected(string arg)
         {
+            try
+            {
+                await hub.InvokeAsync("JoinGameAsPlayer", gameCode);
+                await PlayerSendLog(new TextLogModel()
+                {
+                    From = "A player",
+                    Message = "Has joined (reconnected)"
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("(Hub) Invoke error: " + e.ToString());
+                ConnectionStatusChanged(new HubConnectionStatusEventArgs()
+                {
+                    InvokeFailed = true,
+                    Exception = e
+                });
+            }
+            
             // TODO: rejoin as player with game code
             ConnectionStatusChanged(new HubConnectionStatusEventArgs()
             {
                 Reconnected = true
             });
-            return Task.CompletedTask;
         }
 
         private Task Hub_Closed(Exception arg)
