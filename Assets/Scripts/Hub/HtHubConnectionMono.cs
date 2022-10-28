@@ -28,9 +28,16 @@ namespace Assets.Scripts.Hub
         IDisposable playerReceiveHmCommandHandler;
         IDisposable playerReceiveHmCommandPredefinedHandler;
 
-        public HtHubConnectionMono(GameCodeModel gameCodeModel)
+        /// <summary>
+        /// When signalr client reconnects, it creates a different thread
+        /// Another thread can't touch UI thread
+        /// </summary>
+        readonly QueuedExecutionManager queuedExecutionManager;
+        
+        public HtHubConnectionMono(GameCodeModel gameCodeModel, QueuedExecutionManager queuedExecutionManager)
         {
             gameCode = gameCodeModel;
+            this.queuedExecutionManager = queuedExecutionManager;
         }
 
         public async Task<bool> ConnectAsync()
@@ -63,7 +70,8 @@ namespace Assets.Scripts.Hub
                     try
                     {
                         var ev = OnHmCommand;
-                        ev?.Invoke(null, model);
+                        queuedExecutionManager.Enqueue(QueuedAction.PlayerReceiveHmCommand, model);
+                        //ev?.Invoke(null, model);
                     }
                     catch (Exception e)
                     {
@@ -78,7 +86,8 @@ namespace Assets.Scripts.Hub
                     try
                     {
                         var ev = OnHmPredefinedCommand;
-                        ev?.Invoke(null, model);
+                        queuedExecutionManager.Enqueue(QueuedAction.PlayerReceiveHmCommandPredefined, model);
+                        //ev?.Invoke(null, model);
                     }
                     catch (Exception e)
                     {
@@ -143,8 +152,16 @@ namespace Assets.Scripts.Hub
 
         private void ConnectionStatusChanged(HubConnectionStatusEventArgs args)
         {
-            var ev = OnConnectionStatusChanged;
-            ev?.Invoke(null, args);
+            try
+            {
+                var ev = OnConnectionStatusChanged;
+                //ev?.Invoke(null, args);
+                queuedExecutionManager.Enqueue(QueuedAction.OnConnectionStatusChanged, args);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         private Task Hub_Reconnecting(Exception arg)

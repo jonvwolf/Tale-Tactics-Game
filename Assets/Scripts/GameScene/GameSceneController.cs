@@ -76,6 +76,8 @@ public class GameSceneController : MonoBehaviour
 
     bool quit;
     bool alreadySentQuit;
+
+    readonly QueuedExecutionManager queuedExecutionManager = new();
     // Start is called before the first frame update
     async void Start()
     {
@@ -142,13 +144,14 @@ public class GameSceneController : MonoBehaviour
         });
 
 #if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
-        hub = new HtHubConnectionMono(gameCodeModel);
+        hub = new HtHubConnectionMono(gameCodeModel, queuedExecutionManager);
 #elif UNITY_WEBGL
         hub = new HtHubConnectionWebGl(gameCodeModel);
 #elif UNITY_ANDROID
         // NOT USED Android support Mono
         hub = new HtHubConnectionJava(gameCodeModel);
 #endif
+        // These do nothing for mono implementations
         hub.OnConnectionStatusChanged += Hub_OnConnectionStatusChanged;
         hub.OnHmCommand += Hub_OnHmCommand;
         hub.OnHmPredefinedCommand += Hub_OnHmPredefinedCommand;
@@ -170,6 +173,11 @@ public class GameSceneController : MonoBehaviour
 
     private void Hub_OnHmPredefinedCommand(object sender, HmCommandPredefinedModel e)
     {
+        if (e == null)
+        {
+            Debug.LogError("e is null");
+            return;
+        }
         FirstReceviedHmCommand();
 
         // This is to stop the waiting audio if its the first command
@@ -293,6 +301,12 @@ public class GameSceneController : MonoBehaviour
 
     private void Hub_OnHmCommand(object sender, HmCommandModel e)
     {
+        if (e == null)
+        {
+            Debug.LogError("e is null");
+            return;
+        }
+
         FirstReceviedHmCommand();
 
         Handle_OnHmCommand_Timer(e);
@@ -583,7 +597,7 @@ public class GameSceneController : MonoBehaviour
             if (!alreadySentQuit)
             {
                 alreadySentQuit = true;
-                
+
                 // TODO: if hub is not connected, do not send
                 //await hub.PlayerSendLog(new TextLogModel()
                 //{
@@ -598,6 +612,33 @@ public class GameSceneController : MonoBehaviour
             }
             return;
         }
+#if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
+        else
+        {
+            var actions = queuedExecutionManager.Dequeue();
+            if (actions != null)
+            {
+                foreach (var action in actions)
+                {
+                    switch (action.Item1)
+                    {
+                        case QueuedAction.PlayerReceiveHmCommand:
+                            Hub_OnHmCommand(null, action.Item2 as HmCommandModel);
+                            break;
+                        case QueuedAction.PlayerReceiveHmCommandPredefined:
+                            Hub_OnHmPredefinedCommand(null, action.Item2 as HmCommandPredefinedModel);
+                            break;
+                        case QueuedAction.OnConnectionStatusChanged:
+                            Hub_OnConnectionStatusChanged(null, action.Item2 as HubConnectionStatusEventArgs);
+                            break;
+                        default:
+                            Debug.LogError("Bug. Unkown queuedaction: " + action.Item1);
+                            break;
+                    }
+                }
+            }
+        }
+#endif
     }
 
 }
