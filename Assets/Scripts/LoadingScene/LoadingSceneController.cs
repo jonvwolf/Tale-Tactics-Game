@@ -250,6 +250,7 @@ public class LoadingSceneController : MonoBehaviour
                 ErrorText.text = $"File does not exist: {url}";
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                canExitBecauseError = true;
                 errorHappened = true;
             }
             else if (www.responseCode >= 500 && www.responseCode <= 599)
@@ -258,6 +259,7 @@ public class LoadingSceneController : MonoBehaviour
                 Debug.LogError("Server error: " + www.downloadHandler.text);
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                canExitBecauseError = true;
                 errorHappened = true;
             }
             else if (www.responseCode == 200)
@@ -299,6 +301,7 @@ public class LoadingSceneController : MonoBehaviour
                     btnRetry.enabled = true;
                     btnRetry.gameObject.SetActive(true);
                     errorHappened = true;
+                    canExitBecauseError = true;
                     Debug.LogError("Exception happened: " + e.ToString());
                 }
             }
@@ -307,6 +310,7 @@ public class LoadingSceneController : MonoBehaviour
                 ErrorText.text = "Web request was not successful: " + www.error;
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                canExitBecauseError = true;
                 errorHappened = true;
             }
             else
@@ -314,6 +318,7 @@ public class LoadingSceneController : MonoBehaviour
                 ErrorText.text = "Unkown response code: " + www.responseCode + " Error: " + www.error;
                 btnRetry.enabled = true;
                 btnRetry.gameObject.SetActive(true);
+                canExitBecauseError = true;
                 errorHappened = true;
             }
         }
