@@ -30,7 +30,10 @@ namespace Assets.Scripts
 
         readonly static string BaseUrl = "https://api.taletactics.com";
         //readonly static string BaseUrl = "https://localhost:7216";
-
+        // For android to work, you have to disable HTTPS redirection in API and hardcode this `var url = $"http://10.0.2.2:5216{pathBase}/{subPath}";`
+        // in `public abstract class ModelEntityHandler`
+        //readonly static string BaseUrl = "http://10.0.2.2:5216";
+        
         public readonly static string HubUrl = $"{BaseUrl}/game-hub";
 
         public const int HubTimeoutSeconds = 300;

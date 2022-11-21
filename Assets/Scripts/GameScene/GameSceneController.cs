@@ -136,7 +136,7 @@ public class GameSceneController : MonoBehaviour
             if (await hub.ConnectAsync())
             {
 #if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
-                txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+                txtWaitingText.text = "Connected to hub. Waiting for Game Moderator...";
                 txtError.text = "Connected, you may now close this message";
                 // for webgl it will be called through connection status event
 #endif
@@ -164,7 +164,7 @@ public class GameSceneController : MonoBehaviour
         if (await hub.ConnectAsync())
         {
 #if UNITY_EDITOR || PLATFORM_SUPPORTS_MONO
-            txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+            txtWaitingText.text = "Connected to hub. Waiting for Game Moderator...";
             // for webgl it will be called through connection status event
 #endif
         }
@@ -480,7 +480,7 @@ public class GameSceneController : MonoBehaviour
         if (isFirstConnectedJs && e.ConnectedByJs)
         {
             isFirstConnectedJs = false;
-            txtWaitingText.text = "Connected to hub. Waiting for Horror Master...";
+            txtWaitingText.text = "Connected to hub. Waiting for Game Moderator...";
             cnvError.gameObject.SetActive(false);
             return;
         }
